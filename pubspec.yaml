@@ -1,0 +1,23 @@
+name: ac_drivers
+description: A new Flutter project.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  english_words: ^4.0.0
+  flutter_lorem: ^2.0.0
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  date_format: ^2.0.7
+  drag_and_drop_lists: ^0.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
