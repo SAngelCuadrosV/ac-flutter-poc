@@ -29,6 +29,7 @@ class _RouteTabState extends State<RouteTab> {
   @override
   void initState() {
     _routeStarted = false;
+    startTime = DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
     endTime = DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
     startRoute;
     endRoute;
@@ -196,8 +197,6 @@ class StartRouteButton extends StatelessWidget {
     return ElevatedButton(
       child: const Text('INICIAR COCOM'),
       onPressed: () {
-        // You should do something with the result of the dialog prompt in a
-        // real app but this is just a demo.
         showDialog<void>(
           context: context,
           builder: (context) {
@@ -229,8 +228,6 @@ class StartRouteButton extends StatelessWidget {
       color: CupertinoColors.activeBlue,
       child: const Text('Iniciar cocom'),
       onPressed: () {
-        // You should do something with the result of the action sheet prompt
-        // in a real app but this is just a demo.
         showCupertinoModalPopup<void>(
           context: context,
           builder: (context) {
