@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 
 import '../../widgets/widgets.dart';
+import '../../widgets/finish_route_button.dart';
+import '../../widgets/start_route_button.dart';
 
 class RouteTab extends StatefulWidget {
   final Cocom cocom;
@@ -54,6 +56,27 @@ class _RouteTabState extends State<RouteTab> {
     }
   }
 
+  Widget buildColumn (String text) {
+    return Column(
+      children: [
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          formatDate(startTime, [HH, ':', nn, ':', ss]),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBody() {
     return SafeArea(
       bottom: false,
@@ -98,45 +121,11 @@ class _RouteTabState extends State<RouteTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        const Text(
-                          'Hora de inicio',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          formatDate(startTime, [HH, ':', nn, ':', ss]),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                    buildColumn('Hora de inicio'),
                     const Padding(
                       padding: EdgeInsets.only(left: 40),
                     ),
-                    Column(
-                      children: [
-                        const Text(
-                          'Hora al finalizar',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          formatDate(endTime, [HH, ':', nn, ':', ss]),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                    buildColumn('Hora al finalizar',),
                   ],
                 )
               ],
@@ -186,7 +175,7 @@ class _RouteTabState extends State<RouteTab> {
   }
 }
 
-class StartRouteButton extends StatelessWidget {
+/*class StartRouteButton extends StatelessWidget {
   final void Function() update;
   static const _startMessage = Text(
       "Al iniciar la cocom , se asignará la hora de inicio (La podrás modificar más tarde de ser necesario).");
@@ -264,8 +253,8 @@ class StartRouteButton extends StatelessWidget {
     );
   }
 }
-
-class FinishRouteButton extends StatelessWidget {
+*/
+/*class FinishRouteButton extends StatelessWidget {
   final void Function() update;
   static const _startMessage =
       Text("Una vez finalizada la cocom, no podrás modificarla.");
@@ -350,3 +339,4 @@ class FinishRouteButton extends StatelessWidget {
     );
   }
 }
+*/
