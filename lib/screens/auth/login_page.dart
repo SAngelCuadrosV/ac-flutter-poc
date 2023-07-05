@@ -31,31 +31,45 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(fontSize: 40, color: Colors.black),
             ),
             const SizedBox(height: 40),
-            GestureDetector(onTap: () {
-              try {
-                AuthService().signInWithGoogle();
-              } catch (e) {
-                ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content:  Text('algo salio mal :D'),),
-              );
-              }
-            },child: Image.asset(
+            ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: const BorderSide(color: Colors.blue)),
+                ),
+                elevation: const MaterialStatePropertyAll(8),
+                backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => const Color.fromRGBO(210, 210, 210, 1),
+                ),
+              ),
+              onPressed: () async {
+                final result = await AuthService().signInWithGoogle();
+                if (result == 'error') {
+                  // ignore: use_build_context_synchronously
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text(
+                            'User invalid\nYou don\'t have permission to access'),
+                        actions: [
+                          TextButton(
+                            child: const Text('Ok'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: Image.asset(
                 'lib/assets/images/logos/google logo.png',
                 width: 100,
               ),
             ),
-            // ElevatedButton(
-            //   style: ElevatedButton.styleFrom(
-            //       fixedSize: const Size(120, 120),
-            //       backgroundColor: Colors.white),
-            //   onPressed: () => AuthService().signInWithGoogle(),
-            //   child: Image.asset(
-            //     'lib/assets/images/logos/google logo.png',
-            //     width: 150,
-            //   ),
-            // )
           ],
         ),
       ),
@@ -64,8 +78,55 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildIosHomePage(BuildContext context) {
     return CupertinoPageScaffold(
-      child: Container(),
-      backgroundColor: Colors.white,
+      backgroundColor: CupertinoColors.systemGrey,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              CupertinoIcons.lock,
+              size: 80,
+              color: CupertinoColors.black,
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              'Login',
+              style: TextStyle(fontSize: 40, color: CupertinoColors.black),
+            ),
+            const SizedBox(height: 40),
+            CupertinoButton(
+              borderRadius: BorderRadius.circular(18.0),
+              color: const Color.fromRGBO(210, 210, 210, 1),
+              onPressed: () async {
+                final result = await AuthService().signInWithGoogle();
+                if (result == 'error') {
+                  // ignore: use_build_context_synchronously
+                  showCupertinoModalPopup<void>(
+                    context: context,
+                    builder: (context) {
+                      return CupertinoActionSheet(
+                        title: const Text('Error'),
+                        message: const Text(
+                            'User invalid\nYou don\'t have permission to access'),
+                        actions: [],
+                        cancelButton: CupertinoActionSheetAction(
+                          isDefaultAction: true,
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Ok'),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+              child: Image.asset(
+                'lib/assets/images/logos/google logo.png',
+                width: 100,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -75,6 +136,5 @@ class _LoginPageState extends State<LoginPage> {
       androidBuilder: _buildAndroidHomePage,
       iosBuilder: _buildIosHomePage,
     );
-    ;
   }
 }

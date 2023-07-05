@@ -1,17 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets.dart';
 
 class LogOutButton extends StatelessWidget {
-  static const _logoutMessage = Text(
-      "You can't actually log out! This is just a demo of how alerts work.");
+  static const _logoutMessage = Text("Are you sure you want to logout?");
 
-  const LogOutButton({super.key});
+  const LogOutButton({
+    super.key,
+  });
 
   Widget _buildAndroid(BuildContext context) {
     return ElevatedButton(
-      child: const Text('LOG OUT', style: TextStyle(color: Colors.red)),
+      child: const Text('LOG OUT', style: TextStyle(color: Colors.white)),
       onPressed: () {
         // You should do something with the result of the dialog prompt in a
         // real app but this is just a demo.
@@ -23,8 +25,14 @@ class LogOutButton extends StatelessWidget {
               content: _logoutMessage,
               actions: [
                 TextButton(
-                  child: const Text('Got it'),
-                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Yes'),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    var count = 0;
+                    Navigator.popUntil(context, (route) {
+                      return count++ == 2;
+                    });
+                  },
                 ),
                 TextButton(
                   child: const Text('Cancel'),
@@ -54,8 +62,11 @@ class LogOutButton extends StatelessWidget {
               actions: [
                 CupertinoActionSheetAction(
                   isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Reprogram the night man'),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Yes'),
                 ),
               ],
               cancelButton: CupertinoActionSheetAction(

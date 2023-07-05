@@ -3,15 +3,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   signInWithGoogle() async {
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    var _result;
+    try {
+      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+      final GoogleSignInAuthentication gAuth = await gUser!.authentication;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: gAuth.accessToken,
-      idToken: gAuth.idToken,
-    );
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      );
 
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      _result == await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'admin-restricted-operation') {
+        _result = 'error';
+      }
+    }
+    return _result;
   }
 }
