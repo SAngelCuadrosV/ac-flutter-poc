@@ -2,6 +2,7 @@ import 'package:ac_drivers/assets/contents/models/cocom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
+//import 'package:cupertino_listview/cupertino_listview.dart';
 
 import '../../widgets/widgets.dart';
 import '../../widgets/finish_route_button.dart';
@@ -139,9 +140,11 @@ class _RouteTabState extends State<RouteTab> {
             color: Colors.grey,
           ),
           Expanded(
-            child: PlatformWidget(
-              androidBuilder: _buildAndroidCocoms,
-              iosBuilder: _buildIosCocoms,
+            child: ListView.builder(
+              itemCount: cocomsLocations.length,
+              itemBuilder: (ctx, index) => SingleLocation(
+                location: cocomsLocations[index],
+              ),
             ),
           ),
         ],
@@ -163,28 +166,6 @@ class _RouteTabState extends State<RouteTab> {
         previousPageTitle: 'Cocoms',
       ),
       child: _buildBody(),
-    );
-  }
-
-  Widget _buildAndroidCocoms(BuildContext context) {
-    return ListView.builder(
-      itemCount: cocomsLocations.length,
-      itemBuilder: (ctx, index) => SingleLocation(
-        location: cocomsLocations[index],
-      ),
-    );
-  }
-
-  Widget _buildIosCocoms(BuildContext context) {
-    return CupertinoFormSection(
-      children: [
-        ...List.generate(
-          cocomsLocations.length,
-          (index) => SingleLocation(
-            location: cocomsLocations[index],
-          ),
-        )
-      ],
     );
   }
 

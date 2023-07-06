@@ -108,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
                         title: const Text('Error'),
                         message: const Text(
                             'User invalid\nYou don\'t have permission to access'),
-                        actions: [],
                         cancelButton: CupertinoActionSheetAction(
                           isDefaultAction: true,
                           onPressed: () => Navigator.pop(context),
