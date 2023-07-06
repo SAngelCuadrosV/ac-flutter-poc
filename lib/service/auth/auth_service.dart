@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   signInWithGoogle() async {
-    var _result;
     try {
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
@@ -14,12 +13,11 @@ class AuthService {
         idToken: gAuth.idToken,
       );
 
-      _result == await FirebaseAuth.instance.signInWithCredential(credential);
+      return await FirebaseAuth.instance.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'admin-restricted-operation') {
-        _result = 'error';
+        return 'error';
       }
     }
-    return _result;
   }
 }

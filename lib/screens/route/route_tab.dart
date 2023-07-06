@@ -6,6 +6,8 @@ import 'package:date_format/date_format.dart';
 import '../../widgets/widgets.dart';
 import '../../widgets/finish_route_button.dart';
 import '../../widgets/start_route_button.dart';
+import '../../widgets/single_location.dart';
+import '../../assets/contents/locations.dart';
 
 class RouteTab extends StatefulWidget {
   final Cocom cocom;
@@ -13,10 +15,7 @@ class RouteTab extends StatefulWidget {
   final Color color;
 
   const RouteTab(
-      {super.key,
-      required this.cocom,
-      required this.id,
-      required this.color});
+      {super.key, required this.cocom, required this.id, required this.color});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -31,8 +30,10 @@ class _RouteTabState extends State<RouteTab> {
   @override
   void initState() {
     _routeStarted = false;
-    startTime = DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
-    endTime = DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+    startTime =
+        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+    endTime =
+        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
     startRoute;
     endRoute;
     super.initState();
@@ -56,7 +57,7 @@ class _RouteTabState extends State<RouteTab> {
     }
   }
 
-  Widget buildColumn (String text) {
+  Widget buildColumn(String text) {
     return Column(
       children: [
         Text(
@@ -125,7 +126,9 @@ class _RouteTabState extends State<RouteTab> {
                     const Padding(
                       padding: EdgeInsets.only(left: 40),
                     ),
-                    buildColumn('Hora al finalizar',),
+                    buildColumn(
+                      'Hora al finalizar',
+                    ),
                   ],
                 )
               ],
@@ -136,12 +139,9 @@ class _RouteTabState extends State<RouteTab> {
             color: Colors.grey,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                // Just a bunch of boxes that simulates loading cocom choices.
-                return const CocomPlaceholderTile();
-              },
+            child: PlatformWidget(
+              androidBuilder: _buildAndroidCocoms,
+              iosBuilder: _buildIosCocoms,
             ),
           ),
         ],
@@ -163,6 +163,28 @@ class _RouteTabState extends State<RouteTab> {
         previousPageTitle: 'Cocoms',
       ),
       child: _buildBody(),
+    );
+  }
+
+  Widget _buildAndroidCocoms(BuildContext context) {
+    return ListView.builder(
+      itemCount: cocomsLocations.length,
+      itemBuilder: (ctx, index) => SingleLocation(
+        location: cocomsLocations[index],
+      ),
+    );
+  }
+
+  Widget _buildIosCocoms(BuildContext context) {
+    return CupertinoFormSection(
+      children: [
+        ...List.generate(
+          cocomsLocations.length,
+          (index) => SingleLocation(
+            location: cocomsLocations[index],
+          ),
+        )
+      ],
     );
   }
 

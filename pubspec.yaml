@@ -16,6 +16,8 @@ dependencies:
   firebase_core: ^2.14.0
   google_sign_in: ^6.1.4
   firebase_auth: ^4.6.3
+  google_fonts: ^5.1.0
+  cupertino_listview: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -27,3 +29,7 @@ flutter:
 
   assets:
   - lib\assets\images\logos\google logo.png
+  - lib\assets\images\noooo.gif
+
+  
+  
