@@ -11,10 +11,10 @@ Map<String, Cocom> cocomsContent = {
         'et prises de sang. Veuillez m\'envoyer un message à chaque passage '
         'de centre et si pas de prélèvements, vous m\'appelez !!!',
     locations: [
-      cocomsLocations['RUE BLAES 141'],
-      cocomsLocations['RUE BLAES 250'],
-      cocomsLocations['RUE DE MIDDELBOURG 106'],
-      cocomsLocations['NIJVERHEIDSSTRAAT 100'],
+      cocomsLocations[0],
+      cocomsLocations[1],
+      cocomsLocations[2],
+      cocomsLocations[3],
     ],
   ),
   'COCOM 4 SAMEDI': Cocom(
@@ -27,8 +27,8 @@ Map<String, Cocom> cocomsContent = {
         'passage de centre et si pas de prélèvements, vous '
         'm\'appelez !!!',
     locations: [
-      cocomsLocations['RUE BLAES 141'],
-      cocomsLocations['RUE BLAES 250'],
+      cocomsLocations[1],
+      cocomsLocations[3],
     ],
   ),
   'COCOM 5 SAMEDI': const Cocom(

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "276372546657",
+    "project_id": "ac-flutter-poc",
+    "storage_bucket": "ac-flutter-poc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276372546657:android:d3dfb2ccd2e5674c573620",
+        "android_client_info": {
+          "package_name": "com.example.ac_drivers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276372546657-sl78efibdg261ena7egl4l29o6mq7m2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTI48nAR-aozjhxpXv2EYm-wgTRYRVeWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276372546657-sl78efibdg261ena7egl4l29o6mq7m2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

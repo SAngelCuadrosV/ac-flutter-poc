@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
 import '../../widgets/widgets.dart';
 
@@ -170,6 +171,7 @@ class PreferenceCard extends StatelessWidget {
   }
 }
 
+/*
 class LogOutButton extends StatelessWidget {
   static const _logoutMessage = Text(
       "You can't actually log out! This is just a demo of how alerts work.");
@@ -245,3 +247,4 @@ class LogOutButton extends StatelessWidget {
     );
   }
 }
+*/

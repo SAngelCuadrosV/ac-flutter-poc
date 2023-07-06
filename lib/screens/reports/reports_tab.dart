@@ -64,7 +64,7 @@ class _ReportsTabState extends State<ReportsTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        location!.name,
+                        location.name,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
