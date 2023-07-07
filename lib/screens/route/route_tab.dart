@@ -1,4 +1,4 @@
-import 'package:ac_drivers/assets/contents/models/cocom.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
@@ -8,7 +8,7 @@ import '../../widgets/widgets.dart';
 import '../../widgets/finish_route_button.dart';
 import '../../widgets/start_route_button.dart';
 import '../../widgets/single_location.dart';
-import '../../assets/contents/locations.dart';
+import '../../assets/contents/models/cocom.dart';
 
 class RouteTab extends StatefulWidget {
   final Cocom cocom;
@@ -141,9 +141,9 @@ class _RouteTabState extends State<RouteTab> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: cocomsLocations.length,
+              itemCount: widget.cocom.locations.length,
               itemBuilder: (ctx, index) => SingleLocation(
-                location: cocomsLocations[index],
+                location: widget.cocom.locations[index]!,
               ),
             ),
           ),

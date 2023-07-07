@@ -1,10 +1,10 @@
-import './location.dart';
+import 'in_route_location.dart';
 
 class Cocom {
   final String id;
   final String name;
   final String information;
-  final List<Location?> locations;
+  final List<InRouteLocation?> locations;
 
   const Cocom({
     required this.id,

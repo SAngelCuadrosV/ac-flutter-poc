@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../assets/contents/models/location.dart';
+import '../assets/contents/models/in_route_location.dart';
 import '../widgets/widgets.dart';
 
 class SingleLocation extends StatelessWidget {
-  final Location location;
+  final InRouteLocation location;
 
   SingleLocation({
     required this.location,
@@ -22,7 +22,7 @@ class SingleLocation extends StatelessWidget {
 
   Text _setText() {
     return Text(
-        'Name: ${location.name}\nAddres: ${location.address}\nPostal: ${location.postal}\nPhone: ${location.phone}\nInfo: ${location.information}');
+        'Nombre: ${location.name}\nDirección: ${location.address}\nPostal: ${location.postal}\nTeléfono: ${location.phone}\nInfo: ${location.information}');
   }
 
   void _submit(BuildContext context) {
@@ -41,7 +41,7 @@ class SingleLocation extends StatelessWidget {
           TextFormField(
             controller: controller,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: 'Quantity'),
+            decoration: InputDecoration(hintText: location.quantity.toString()),
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
             ],
@@ -53,10 +53,10 @@ class SingleLocation extends StatelessWidget {
           onPressed: () {
             _submit(context);
           },
-          child: const Text('registrar'),
+          child: const Text('Registrar'),
         ),
         TextButton(
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
           onPressed: () => Navigator.pop(context),
         ),
       ],
@@ -70,7 +70,7 @@ class SingleLocation extends StatelessWidget {
         children: [
           _setText(),
           const SizedBox(height: 16),
-          const Text('Quantity:'),
+          const Text('Cantidad:'),
           CupertinoTextFormFieldRow(
             controller: controller,
             keyboardType: TextInputType.number,
@@ -87,14 +87,14 @@ class SingleLocation extends StatelessWidget {
           onPressed: () {
             _submit(context);
           },
-          child: const Text('registrar'),
+          child: const Text('Registrar'),
         ),
       ],
       cancelButton: CupertinoActionSheetAction(
         isDefaultAction: true,
         onPressed: () => Navigator.pop(context),
         child: const Text(
-          'Cancel',
+          'Cancelar',
           style: TextStyle(color: Colors.red),
         ),
       ),

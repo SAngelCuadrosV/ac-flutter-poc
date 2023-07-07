@@ -5,11 +5,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-
-import 'package:ac_drivers/assets/contents/models/location.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../assets/contents/models/in_route_location.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/widgets.dart';
 
@@ -25,7 +24,7 @@ class ReportsTab extends StatefulWidget {
 }
 
 class _ReportsTabState extends State<ReportsTab> {
-  final List<Location?>? locationItems =
+  final List<InRouteLocation?>? locationItems =
       cocomsContent['COCOM 3 SAMEDI']?.locations;
 
   @override
@@ -33,7 +32,7 @@ class _ReportsTabState extends State<ReportsTab> {
     super.initState();
   }
 
-  Widget LocationCard(Location? location) {
+  Widget LocationCard(InRouteLocation? location) {
     return Container(
       key: Key(location!.name),
       child: Card(
@@ -105,7 +104,7 @@ class _ReportsTabState extends State<ReportsTab> {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final Location? item = locationItems!.removeAt(oldIndex);
+            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
             locationItems!.insert(newIndex, item);
           });
         },
@@ -127,7 +126,7 @@ class _ReportsTabState extends State<ReportsTab> {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final Location? item = locationItems!.removeAt(oldIndex);
+            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
             locationItems!.insert(newIndex, item);
           });
         },
