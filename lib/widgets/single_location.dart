@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -8,23 +9,54 @@ import '../widgets/widgets.dart';
 class SingleLocation extends StatelessWidget {
   final Location location;
 
-  const SingleLocation({
+  SingleLocation({
     required this.location,
     super.key,
   });
+
+  final controller = TextEditingController();
 
   Image get getImage {
     return Image.asset('lib/assets/images/noooo.gif');
   }
 
+  Text _setText() {
+    return Text(
+        'Name: ${location.name}\nAddres: ${location.address}\nPostal: ${location.postal}\nPhone: ${location.phone}\nInfo: ${location.information}');
+  }
+
+  void _submit(BuildContext context) {
+    print(controller.text);
+
+    Navigator.pop(context);
+  }
+
   Widget _buildAlertAndroid(BuildContext context) {
     return AlertDialog(
       title: const Text('Info'),
-      content: Text(
-          'Name: ${location.name}\nAddres: ${location.address}\nPostal: ${location.postal}\nPhone: ${location.phone}\nInfo: ${location.information}'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _setText(),
+          TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(hintText: 'Quantity'),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+            ],
+          )
+        ],
+      ),
       actions: [
+        ElevatedButton(
+          onPressed: () {
+            _submit(context);
+          },
+          child: const Text('registrar'),
+        ),
         TextButton(
-          child: const Text('Ok'),
+          child: const Text('Cancel'),
           onPressed: () => Navigator.pop(context),
         ),
       ],
@@ -34,13 +66,37 @@ class SingleLocation extends StatelessWidget {
   Widget _buildalertIos(BuildContext context) {
     return CupertinoActionSheet(
       title: const Text('Info'),
-      message: Text(
-          'Name: ${location.name}\nAddres: ${location.address}\nPostal: ${location.postal}\nPhone: ${location.phone}\nInfo: ${location.information}'),
-      actions: [],
+      message: Column(
+        children: [
+          _setText(),
+          const SizedBox(height: 16),
+          const Text('Quantity:'),
+          CupertinoTextFormFieldRow(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+            ],
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.2)),
+          )
+        ],
+      ),
+      actions: [
+        CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            _submit(context);
+          },
+          child: const Text('registrar'),
+        ),
+      ],
       cancelButton: CupertinoActionSheetAction(
         isDefaultAction: true,
         onPressed: () => Navigator.pop(context),
-        child: const Text('Ok'),
+        child: const Text(
+          'Cancel',
+          style: TextStyle(color: Colors.red),
+        ),
       ),
     );
   }
@@ -60,7 +116,10 @@ class SingleLocation extends StatelessWidget {
         );
       },
       child: Row(children: [
-        getImage,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: getImage,
+        ),
         const SizedBox(width: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
