@@ -32,7 +32,7 @@ class _ReportsTabState extends State<ReportsTab> {
     super.initState();
   }
 
-  Widget LocationCard(InRouteLocation? location) {
+  Widget locationCard(InRouteLocation? location) {
     return Container(
       key: Key(location!.name),
       child: Card(
@@ -97,7 +97,7 @@ class _ReportsTabState extends State<ReportsTab> {
         proxyDecorator: proxyDecorator,
         children: <Widget>[
           for (int index = 0; index < locationItems!.length; index += 1)
-            LocationCard(locationItems![index])
+            locationCard(locationItems![index])
         ],
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
@@ -119,7 +119,7 @@ class _ReportsTabState extends State<ReportsTab> {
         proxyDecorator: proxyDecorator,
         children: <Widget>[
           for (int index = 0; index < locationItems!.length; index += 1)
-            LocationCard(locationItems![index])
+            locationCard(locationItems![index])
         ],
         onReorder: (int oldIndex, int newIndex) {
           setState(() {

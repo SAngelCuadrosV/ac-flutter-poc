@@ -16,11 +16,11 @@ class PlatformAdaptingHomePage extends StatefulWidget {
 }
 
 class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
-  final CocomsTabKey = GlobalKey();
+  final cocomsTabKey = GlobalKey();
 
   Widget _buildAndroidHomePage(BuildContext context) {
     return CocomsTab(
-      key: CocomsTabKey,
+      key: cocomsTabKey,
       androidDrawer: _AndroidDrawer(),
     );
   }
@@ -48,7 +48,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
           case 0:
             return CupertinoTabView(
               defaultTitle: CocomsTab.title,
-              builder: (context) => CocomsTab(key: CocomsTabKey),
+              builder: (context) => CocomsTab(key: cocomsTabKey),
             );
           case 1:
             return CupertinoTabView(

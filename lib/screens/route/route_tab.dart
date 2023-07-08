@@ -1,9 +1,10 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
-//import 'package:cupertino_listview/cupertino_listview.dart';
 
+import '../../assets/contents/locations.dart';
+import '../../assets/contents/models/in_route_location.dart';
+import '../../widgets/add_alert.dart';
 import '../../widgets/widgets.dart';
 import '../../widgets/finish_route_button.dart';
 import '../../widgets/start_route_button.dart';
@@ -80,8 +81,23 @@ class _RouteTabState extends State<RouteTab> {
   }
 
   void _onDismiss(String key) {
-    widget.cocom.locations.removeWhere((element) => element!.id == key,);
-  } 
+    widget.cocom.locations.removeWhere(
+      (element) => element!.id == key,
+    );
+  }
+
+  void _onAdd(String name) {
+    var result = cocomsLocations.firstWhere((element) => element.name == name);
+    print(result);
+    var irl = InRouteLocation(
+        id: result.id,
+        name: result.name,
+        postal: result.postal,
+        address: result.address);
+    setState(() {
+      widget.cocom.locations.add(irl);
+    });
+  }
 
   Widget _buildBody() {
     return SafeArea(
@@ -131,9 +147,7 @@ class _RouteTabState extends State<RouteTab> {
                     const Padding(
                       padding: EdgeInsets.only(left: 40),
                     ),
-                    buildColumn(
-                      'Hora al finalizar',
-                    ),
+                    buildColumn('Hora al finalizar'),
                   ],
                 )
               ],
@@ -159,12 +173,40 @@ class _RouteTabState extends State<RouteTab> {
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.cocom.name)),
+      appBar: AppBar(
+        title: Text(widget.cocom.name),
+      ),
       body: _buildBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog<void>(
+            context: context,
+            builder: (ctx) {
+              return AddAlert(function: _onAdd);
+            },
+          );
+        },
+        backgroundColor: widget.color,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
   Widget _buildIos(BuildContext context) {
+    // return Scaffold(
+    //   bottomNavigationBar: CupertinoNavigationBar(
+    //     middle: Text(widget.cocom.name),
+    //     previousPageTitle: 'Cocoms',
+    //   ),
+    //   body: _buildBody(),
+    //   floatingActionButton: FloatingActionButton(
+    //     onPressed: () {
+
+    //     },
+    //     backgroundColor: widget.color,
+    //     child: const Icon(Icons.add),
+    //   ),
+    // );
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.cocom.name),
@@ -182,169 +224,3 @@ class _RouteTabState extends State<RouteTab> {
     );
   }
 }
-
-/*class StartRouteButton extends StatelessWidget {
-  final void Function() update;
-  static const _startMessage = Text(
-      "Al iniciar la cocom , se asignará la hora de inicio (La podrás modificar más tarde de ser necesario).");
-
-  const StartRouteButton({super.key, required this.update});
-
-  Widget _buildAndroid(BuildContext context) {
-    return ElevatedButton(
-      child: const Text('INICIAR COCOM'),
-      onPressed: () {
-        showDialog<void>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('¿Iniciar Cocom?'),
-              content: _startMessage,
-              actions: [
-                ElevatedButton(
-                  onPressed: (() {
-                    update();
-                    Navigator.pop(context);
-                  }),
-                  child: const Text('¡Empecemos!'),
-                ),
-                TextButton(
-                  child: const Text('Cancelar'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
-    return CupertinoButton(
-      color: CupertinoColors.activeBlue,
-      child: const Text('Iniciar cocom'),
-      onPressed: () {
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (context) {
-            return CupertinoActionSheet(
-              title: const Text('¿Iniciar Cocom?'),
-              message: _startMessage,
-              actions: [
-                CupertinoActionSheetAction(
-                  onPressed: (() {
-                    update();
-                    Navigator.pop(context);
-                  }),
-                  child: const Text('¡Empecemos!'),
-                ),
-              ],
-              cancelButton: CupertinoActionSheetAction(
-                isDestructiveAction: true,
-                isDefaultAction: true,
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
-  }
-}
-*/
-/*class FinishRouteButton extends StatelessWidget {
-  final void Function() update;
-  static const _startMessage =
-      Text("Una vez finalizada la cocom, no podrás modificarla.");
-
-  const FinishRouteButton({super.key, required this.update});
-
-  Widget _buildAndroid(BuildContext context) {
-    return ElevatedButton(
-      child: const Text('FINALIZAR COCOM'),
-      onPressed: () {
-        // You should do something with the result of the dialog prompt in a
-        // real app but this is just a demo.
-        showDialog<void>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('¿Finalizar cocom?'),
-              content: _startMessage,
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: (() {
-                    update();
-                    Navigator.pop(context);
-                  }),
-                  child: const Text('¡A descansar!'),
-                ),
-                TextButton(
-                  child: const Text('Cancelar'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
-    return CupertinoButton(
-      color: CupertinoColors.activeBlue,
-      child: const Text('Finalizar cocom'),
-      onPressed: () {
-        // You should do something with the result of the action sheet prompt
-        // in a real app but this is just a demo.
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (context) {
-            return CupertinoActionSheet(
-              title: const Text('Finalizar Cocom?'),
-              message: _startMessage,
-              actions: [
-                CupertinoActionSheetAction(
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('¡A descansar!'),
-                ),
-              ],
-              cancelButton: CupertinoActionSheetAction(
-                isDefaultAction: true,
-                onPressed: (() {
-                  update();
-                  Navigator.pop(context);
-                }),
-                child: const Text('Cancelar'),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
-  }
-}
-*/

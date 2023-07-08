@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -129,7 +131,7 @@ class SingleLocation extends StatelessWidget {
     return result;
   }
 
-  Future<bool> _buildConfirmIos(BuildContext context) async  {
+  Future<bool> _buildConfirmIos(BuildContext context) async {
     bool result = false;
     showCupertinoModalPopup<void>(
       context: context,
@@ -167,8 +169,7 @@ class SingleLocation extends StatelessWidget {
     return Dismissible(
       key: Key(location.id),
       confirmDismiss: (direction) async {
-        // ignore: unrelated_type_equality_checks
-        if (TargetPlatform.android == true) {
+        if (Platform.isAndroid) {
           return _buildConfirmAndroid(context);
         } else {
           return _buildConfirmIos(context);
