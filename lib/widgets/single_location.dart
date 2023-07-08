@@ -8,8 +8,10 @@ import '../widgets/widgets.dart';
 
 class SingleLocation extends StatelessWidget {
   final InRouteLocation location;
+  final Function(String key) function;
 
   SingleLocation({
+    required this.function,
     required this.location,
     super.key,
   });
@@ -26,8 +28,8 @@ class SingleLocation extends StatelessWidget {
   }
 
   void _submit(BuildContext context) {
-    print(controller.text);
-
+    location.quantity = int.parse(controller.text);
+    controller.clear();
     Navigator.pop(context);
   }
 
@@ -63,7 +65,7 @@ class SingleLocation extends StatelessWidget {
     );
   }
 
-  Widget _buildalertIos(BuildContext context) {
+  Widget _buildAlertIos(BuildContext context) {
     return CupertinoActionSheet(
       title: const Text('Info'),
       message: Column(
@@ -101,48 +103,118 @@ class SingleLocation extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showDialog<void>(
-          context: context,
-          builder: (context) {
-            return PlatformWidget(
-              androidBuilder: _buildAlertAndroid,
-              iosBuilder: _buildalertIos,
-            );
+  Future<bool> _buildConfirmAndroid(BuildContext context) async {
+    bool result = false;
+    AlertDialog(
+      title: const Text("Confirmar"),
+      content: const Text("Estas seguro que quieres eliminar esto?"),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            function(location.id);
+            Navigator.of(context).pop(true);
+            result = true;
           },
-        );
-      },
-      child: Row(children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: getImage,
+          child: const Text("ELIMINAR"),
         ),
-        const SizedBox(width: 20),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              location.name,
-              style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              location.postal,
-              style: GoogleFonts.raleway(fontSize: 12),
-            ),
-            Text(
-              location.address,
-              style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              location.phone,
-              style: GoogleFonts.raleway(fontSize: 12),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+            result = false;
+          },
+          child: const Text("CANCELAR"),
+        ),
+      ],
+    );
+    return result;
+  }
+
+  Future<bool> _buildConfirmIos(BuildContext context) async  {
+    bool result = false;
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: const Text("Confirmar"),
+          message: const Text("Estas seguro que quieres eliminar esto?"),
+          actions: [
+            CupertinoActionSheetAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                function(location.id);
+                Navigator.of(context).pop(true);
+                result = true;
+              },
+              child: const Text("ELIMINAR"),
             ),
           ],
-        )
-      ]),
+          cancelButton: CupertinoActionSheetAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              result = false;
+            },
+            child: const Text("CANCELAR"),
+          ),
+        );
+      },
+    );
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: Key(location.id),
+      confirmDismiss: (direction) async {
+        // ignore: unrelated_type_equality_checks
+        if (TargetPlatform.android == true) {
+          return _buildConfirmAndroid(context);
+        } else {
+          return _buildConfirmIos(context);
+        }
+      },
+      child: GestureDetector(
+        onTap: () {
+          showDialog<void>(
+            context: context,
+            builder: (context) {
+              return PlatformWidget(
+                androidBuilder: _buildAlertAndroid,
+                iosBuilder: _buildAlertIos,
+              );
+            },
+          );
+        },
+        child: Row(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: getImage,
+          ),
+          const SizedBox(width: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                location.name,
+                style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                location.postal,
+                style: GoogleFonts.raleway(fontSize: 12),
+              ),
+              Text(
+                location.address,
+                style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                location.phone,
+                style: GoogleFonts.raleway(fontSize: 12),
+              ),
+            ],
+          )
+        ]),
+      ),
     );
   }
 }

@@ -79,6 +79,10 @@ class _RouteTabState extends State<RouteTab> {
     );
   }
 
+  void _onDismiss(String key) {
+    widget.cocom.locations.removeWhere((element) => element!.id == key,);
+  } 
+
   Widget _buildBody() {
     return SafeArea(
       bottom: false,
@@ -144,6 +148,7 @@ class _RouteTabState extends State<RouteTab> {
               itemCount: widget.cocom.locations.length,
               itemBuilder: (ctx, index) => SingleLocation(
                 location: widget.cocom.locations[index]!,
+                function: _onDismiss,
               ),
             ),
           ),
