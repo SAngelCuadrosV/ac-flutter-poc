@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -105,9 +103,8 @@ class SingleLocation extends StatelessWidget {
     );
   }
 
-  Future<bool> _buildConfirmAndroid(BuildContext context) async {
-    bool result = false;
-    AlertDialog(
+  Widget _buildConfirmAndroid(BuildContext context) {
+    return AlertDialog(
       title: const Text("Confirmar"),
       content: const Text("Estas seguro que quieres eliminar esto?"),
       actions: <Widget>[
@@ -115,53 +112,41 @@ class SingleLocation extends StatelessWidget {
           onPressed: () {
             function(location.id);
             Navigator.of(context).pop(true);
-            result = true;
           },
           child: const Text("ELIMINAR"),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(false);
-            result = false;
           },
           child: const Text("CANCELAR"),
         ),
       ],
     );
-    return result;
   }
 
-  Future<bool> _buildConfirmIos(BuildContext context) async {
-    bool result = false;
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (context) {
-        return CupertinoActionSheet(
-          title: const Text("Confirmar"),
-          message: const Text("Estas seguro que quieres eliminar esto?"),
-          actions: [
-            CupertinoActionSheetAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                function(location.id);
-                Navigator.of(context).pop(true);
-                result = true;
-              },
-              child: const Text("ELIMINAR"),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            isDefaultAction: true,
-            onPressed: () {
-              Navigator.pop(context);
-              result = false;
-            },
-            child: const Text("CANCELAR"),
-          ),
-        );
-      },
+  Widget _buildConfirmIos(BuildContext context) {
+    return CupertinoActionSheet(
+      title: const Text("Confirmar"),
+      message: const Text("Estas seguro que quieres eliminar esto?"),
+      actions: [
+        CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          onPressed: () {
+            function(location.id);
+            Navigator.of(context).pop(true);
+          },
+          child: const Text("ELIMINAR"),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: const Text("CANCELAR"),
+      ),
     );
-    return result;
   }
 
   @override
@@ -169,11 +154,14 @@ class SingleLocation extends StatelessWidget {
     return Dismissible(
       key: Key(location.id),
       confirmDismiss: (direction) async {
-        if (Platform.isAndroid) {
-          return _buildConfirmAndroid(context);
-        } else {
-          return _buildConfirmIos(context);
-        }
+        return showDialog(
+            context: context,
+            builder: (context) {
+              return PlatformWidget(
+                androidBuilder: _buildConfirmAndroid,
+                iosBuilder: _buildConfirmIos,
+              );
+            });
       },
       child: GestureDetector(
         onTap: () {
