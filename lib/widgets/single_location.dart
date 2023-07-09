@@ -106,7 +106,7 @@ class SingleLocation extends StatelessWidget {
   Widget _buildConfirmAndroid(BuildContext context) {
     return AlertDialog(
       title: const Text("Confirmar"),
-      content: const Text("Estas seguro que quieres eliminar esto?"),
+      content: const Text("¿Estas seguro que quieres eliminar esto?"),
       actions: <Widget>[
         TextButton(
           onPressed: () {
@@ -128,7 +128,7 @@ class SingleLocation extends StatelessWidget {
   Widget _buildConfirmIos(BuildContext context) {
     return CupertinoActionSheet(
       title: const Text("Confirmar"),
-      message: const Text("Estas seguro que quieres eliminar esto?"),
+      message: const Text("¿Estas seguro que quieres eliminar esto?"),
       actions: [
         CupertinoActionSheetAction(
           isDestructiveAction: true,
