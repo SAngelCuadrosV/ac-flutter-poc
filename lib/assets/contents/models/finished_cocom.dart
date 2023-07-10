@@ -5,8 +5,8 @@ class FinishedCocom{
   final String name;
   final String information;
   final List<InRouteLocation?> locations;
-  final DateTime startHour;
-  final DateTime finishHour;
+  final String startHour;
+  final String finishHour;
 
   const FinishedCocom({
     required this.startHour,
