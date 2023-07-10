@@ -13,7 +13,7 @@ class FinishedCocom{
     required this.endHour,
     required this.id,
     required this.name,
-    this.information = '',
+    this.information = '-',
     required this.locations,
   });
 }

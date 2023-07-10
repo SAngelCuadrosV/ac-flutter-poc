@@ -6,10 +6,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 
-import '../../assets/contents/models/in_route_location.dart';
-import '../../assets/contents/cocoms.dart';
+import '../../assets/contents/finished_cocoms.dart';
+import '../../widgets/finished_cocom_card.dart';
 import '../../widgets/widgets.dart';
 
 class ReportsTab extends StatefulWidget {
@@ -24,66 +23,13 @@ class ReportsTab extends StatefulWidget {
 }
 
 class _ReportsTabState extends State<ReportsTab> {
-  final List<InRouteLocation?>? locationItems =
-      cocomsContent['COCOM 3 SAMEDI']?.locations;
 
   @override
   void initState() {
     super.initState();
   }
 
-  Widget locationCard(InRouteLocation? location) {
-    return Container(
-      key: Key(location!.name),
-      child: Card(
-        elevation: 1.5,
-        margin: const EdgeInsets.fromLTRB(6, 12, 6, 0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: InkWell(
-          // Make it splash on Android. It would happen automatically if this
-          // was a real card but this is just a demo. Skip the splash on iOS.
-          onTap: defaultTargetPlatform == TargetPlatform.android ? null : () {},
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Text(
-                    "X",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(left: 16)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        location.name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(top: 8)),
-                      Text(
-                        location.information,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
+  
   // ===========================================================================
   // Non-shared code below because this tab uses different scaffolds.
   // ===========================================================================
@@ -93,21 +39,11 @@ class _ReportsTabState extends State<ReportsTab> {
       appBar: AppBar(
         title: const Text(ReportsTab.title),
       ),
-      body: ReorderableListView(
-        proxyDecorator: proxyDecorator,
-        children: <Widget>[
-          for (int index = 0; index < locationItems!.length; index += 1)
-            locationCard(locationItems![index])
-        ],
-        onReorder: (int oldIndex, int newIndex) {
-          setState(() {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
-            locationItems!.insert(newIndex, item);
-          });
-        },
+      body: ListView(
+        children: [
+          for (final fcocom in finishedList)
+            FinishedCocomCard(cocom: fcocom)
+        ].reversed.toList(),
       ),
     );
   }
@@ -115,21 +51,11 @@ class _ReportsTabState extends State<ReportsTab> {
   Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(),
-      child: ReorderableListView(
-        proxyDecorator: proxyDecorator,
-        children: <Widget>[
-          for (int index = 0; index < locationItems!.length; index += 1)
-            locationCard(locationItems![index])
-        ],
-        onReorder: (int oldIndex, int newIndex) {
-          setState(() {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
-            locationItems!.insert(newIndex, item);
-          });
-        },
+      child: ListView(
+        children: [
+          for (final fcocom in finishedList)
+            FinishedCocomCard(cocom: fcocom)
+        ].reversed.toList(),
       ),
     );
   }

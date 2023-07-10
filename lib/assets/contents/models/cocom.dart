@@ -11,7 +11,7 @@ class Cocom {
   Cocom({
     required this.id,
     required this.name,
-    this.information = '',
+    this.information = '-',
     required this.locations,
     this.isStarted = false,
     this.startTime = '',

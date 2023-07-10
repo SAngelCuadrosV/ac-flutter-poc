@@ -63,12 +63,12 @@ class _RouteTabState extends State<RouteTab> {
   void endRoute() {
     if (widget.cocom.isStarted) {
       endDate = DateFormat('yMMMd').format(DateTime.now());
-      addCocomEnd();
       _cocomEnd = true;
       setState(() {
         widget.cocom.isStarted = false;
         endTime = DateFormat('Hm').format(DateTime.now());
       });
+      addCocomEnd();
     }
   }
 

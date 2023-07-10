@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../assets/contents/models/finished_cocom.dart';
+
 class FinishedCocomCard extends StatefulWidget {
   final FinishedCocom cocom;
 
   const FinishedCocomCard({
-    required this.cocom, 
+    required this.cocom,
     super.key,
   });
 
@@ -14,13 +15,42 @@ class FinishedCocomCard extends StatefulWidget {
 }
 
 class _FinishedCocomCardState extends State<FinishedCocomCard> {
+  bool displayDetails = false;
+
+  Widget cocomTitle() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.check_circle, color: Colors.blue, size: 40),
+        const SizedBox(
+          width: 10,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.cocom.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+            Text(widget.cocom.endHour, style: const TextStyle(fontSize: 12),),
+          ],
+        ),
+        const Spacer()
+      ],
+    );
+  }
+
   Widget cocomDetails() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      
       children: [
+        const SizedBox(height: 6),
         Text('Información: ${widget.cocom.information}'),
         Text('Hora de inicio: ${widget.cocom.startHour}'),
         Text('Hora de finalización: ${widget.cocom.endHour}'),
-        const Text('Ubiaciones:\n'),
+        const SizedBox(height: 6, width: double.maxFinite,),
+        const Text(
+          'Ubiaciones:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         for (final location in widget.cocom.locations)
           Text('- ${location!.name}: cantidad recogida ${location.quantity}')
       ],
@@ -29,34 +59,26 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
 
   @override
   Widget build(BuildContext context) {
-    bool displayDetails = false;
     return GestureDetector(
-      onTap: () => displayDetails = !displayDetails,
-      onLongPress: () {
-        
+      onTap: () {
+        setState(() {
+          displayDetails = !displayDetails;
+        });
       },
-      child: Hero(
-      tag: cocomDetails,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_circle, color: Colors.blue, size: 40),
-              const SizedBox(),
-              Column(
-                children: [
-                  Text(widget.cocom.name),
-                  Text(widget.cocom.endHour),
-                ],
-              ),
-            ],
-          ),
-          // ignore: dead_code
-          if (displayDetails) cocomDetails()
-        ],
+      onLongPress: () {
+        // modificación acá
+        print ('modificando...');
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            cocomTitle(),
+            if (displayDetails) cocomDetails(),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

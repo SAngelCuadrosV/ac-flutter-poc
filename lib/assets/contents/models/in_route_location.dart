@@ -13,7 +13,7 @@ class InRouteLocation {
     required this.postal,
     required this.address,
     this.quantity = 0,
-    this.phone = '',
-    this.information = '',
+    this.phone = '-',
+    this.information = '-',
   });
 }
