@@ -32,6 +32,9 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
     bool displayDetails = false;
     return GestureDetector(
       onTap: () => displayDetails = !displayDetails,
+      onLongPress: () {
+        
+      },
       child: Hero(
       tag: cocomDetails,
       child: Column(

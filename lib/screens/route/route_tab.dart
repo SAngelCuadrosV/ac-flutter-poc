@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:date_format/date_format.dart';
+import 'package:intl/intl.dart';
 
 import '../../assets/contents/locations.dart';
 import '../../assets/contents/models/in_route_location.dart';
@@ -25,54 +25,51 @@ class RouteTab extends StatefulWidget {
 }
 
 class _RouteTabState extends State<RouteTab> {
-  bool _routeStarted = false;
   bool _routeFinished = false;
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
+  String startTime = '00:00';
+  String endTime = '00:00';
 
   @override
   void initState() {
-    _routeStarted = false;
-    startTime =
-        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
-    endTime =
-        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
-    startRoute;
-    endRoute;
+    if (widget.cocom.isStarted) {
+      startTime = widget.cocom.startTime;
+    }
+      startRoute;
+      endRoute;
     super.initState();
   }
 
   void startRoute() {
-    if (!_routeStarted) {
+    if (!widget.cocom.isStarted) {
+      widget.cocom.isStarted = true;
+      widget.cocom.startTime = DateFormat('Hm').format(DateTime.now());
       setState(() {
-        _routeStarted = !_routeStarted;
-        startTime = DateTime.now();
+        startTime = DateFormat('Hm').format(DateTime.now());
       });
     }
   }
 
   void endRoute() {
-    if (_routeStarted) {
+    if (widget.cocom.isStarted) {
       setState(() {
-        _routeStarted = !_routeStarted;
+        widget.cocom.isStarted = !widget.cocom.isStarted;
         _routeFinished = !_routeFinished;
-        endTime = DateTime.now();
+        endTime = DateFormat('Hm').format(DateTime.now());
       });
     }
   }
 
   void cancelRoute() {
     setState(() {
-      _routeStarted = false;
+      widget.cocom.isStarted = false;
+      widget.cocom.startTime = '';
       _routeFinished = false;
-      startTime = DateTime(
-          startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
-      endTime = DateTime(
-          startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+      startTime = '00:00';
+      endTime = '00:00';
     });
   }
 
-  Widget buildColumn(String text) {
+  Widget buildColumn(String text, String time) {
     return Column(
       children: [
         Text(
@@ -83,7 +80,7 @@ class _RouteTabState extends State<RouteTab> {
           ),
         ),
         Text(
-          formatDate(startTime, [HH, ':', nn, ':', ss]),
+          time,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -137,7 +134,8 @@ class _RouteTabState extends State<RouteTab> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 15, top: 16, bottom: 8, right: 15),
+            padding:
+                const EdgeInsets.only(left: 15, top: 16, bottom: 8, right: 15),
             child: Column(
               children: [
                 Text(
@@ -149,9 +147,9 @@ class _RouteTabState extends State<RouteTab> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: _routeStarted
+                  child: widget.cocom.isStarted
                       ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             FinishRouteButton(
                                 update: endRoute, cancel: cancelRoute),
@@ -162,11 +160,11 @@ class _RouteTabState extends State<RouteTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildColumn('Hora de inicio'),
+                    buildColumn('Hora de inicio', startTime),
                     const Padding(
                       padding: EdgeInsets.only(left: 40),
                     ),
-                    buildColumn('Hora al finalizar'),
+                    buildColumn('Hora al finalizar', endTime),
                   ],
                 )
               ],

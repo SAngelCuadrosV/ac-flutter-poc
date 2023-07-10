@@ -5,11 +5,15 @@ class Cocom {
   final String name;
   final String information;
   final List<InRouteLocation?> locations;
+  bool isStarted;
+  String startTime;
 
-  const Cocom({
+  Cocom({
     required this.id,
     required this.name,
     this.information = '',
     required this.locations,
+    this.isStarted = false,
+    this.startTime = '',
   });
 }
