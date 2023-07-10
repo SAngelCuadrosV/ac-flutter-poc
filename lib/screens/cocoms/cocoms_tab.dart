@@ -52,6 +52,11 @@ class _CocomsTabState extends State<CocomsTab> {
     );
   }
 
+  void cocomEnd() {
+    // funciones para eliminar la cocom
+    print('cocom terminada.');
+  }
+
   Widget _listBuilder(BuildContext context, int index) {
     if (index >= _itemsLength) return Container();
 
@@ -76,6 +81,7 @@ class _CocomsTabState extends State<CocomsTab> {
                 id: index,
                 cocom: cocomNames[index],
                 color: color,
+                cocomEnd: cocomEnd,
               ),
             ),
           ),

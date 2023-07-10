@@ -5,12 +5,12 @@ class FinishedCocom{
   final String name;
   final String information;
   final List<InRouteLocation?> locations;
-  final String startHour;
-  final String finishHour;
+  String startHour;
+  String endHour;
 
-  const FinishedCocom({
+  FinishedCocom({
     required this.startHour,
-    required this.finishHour,
+    required this.endHour,
     required this.id,
     required this.name,
     this.information = '',

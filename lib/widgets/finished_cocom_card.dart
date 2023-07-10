@@ -19,7 +19,7 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
       children: [
         Text('Información: ${widget.cocom.information}'),
         Text('Hora de inicio: ${widget.cocom.startHour}'),
-        Text('Hora de finalización: ${widget.cocom.finishHour}'),
+        Text('Hora de finalización: ${widget.cocom.endHour}'),
         const Text('Ubiaciones:\n'),
         for (final location in widget.cocom.locations)
           Text('- ${location!.name}: cantidad recogida ${location.quantity}')
@@ -48,7 +48,7 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
               Column(
                 children: [
                   Text(widget.cocom.name),
-                  Text(widget.cocom.finishHour),
+                  Text(widget.cocom.endHour),
                 ],
               ),
             ],

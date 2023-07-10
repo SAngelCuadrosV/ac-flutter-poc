@@ -1,3 +1,5 @@
+import 'package:ac_drivers/assets/contents/finished_cocoms.dart';
+import 'package:ac_drivers/assets/contents/models/finished_cocom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +14,18 @@ import '../../widgets/single_location.dart';
 import '../../assets/contents/models/cocom.dart';
 
 class RouteTab extends StatefulWidget {
+  final void Function() cocomEnd;
   final Cocom cocom;
   final int id;
   final Color color;
 
-  const RouteTab(
-      {super.key, required this.cocom, required this.id, required this.color});
+  const RouteTab({
+    super.key,
+    required this.cocom,
+    required this.id,
+    required this.color,
+    required this.cocomEnd,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -25,7 +33,9 @@ class RouteTab extends StatefulWidget {
 }
 
 class _RouteTabState extends State<RouteTab> {
-  bool _routeFinished = false;
+  bool _cocomEnd = false;
+  String startDate = '';
+  String endDate = '';
   String startTime = '00:00';
   String endTime = '00:00';
 
@@ -34,8 +44,8 @@ class _RouteTabState extends State<RouteTab> {
     if (widget.cocom.isStarted) {
       startTime = widget.cocom.startTime;
     }
-      startRoute;
-      endRoute;
+    startRoute;
+    endRoute;
     super.initState();
   }
 
@@ -43,6 +53,7 @@ class _RouteTabState extends State<RouteTab> {
     if (!widget.cocom.isStarted) {
       widget.cocom.isStarted = true;
       widget.cocom.startTime = DateFormat('Hm').format(DateTime.now());
+      startDate = DateFormat('yMMMd').format(DateTime.now());
       setState(() {
         startTime = DateFormat('Hm').format(DateTime.now());
       });
@@ -51,9 +62,11 @@ class _RouteTabState extends State<RouteTab> {
 
   void endRoute() {
     if (widget.cocom.isStarted) {
+      endDate = DateFormat('yMMMd').format(DateTime.now());
+      addCocomEnd();
+      _cocomEnd = true;
       setState(() {
-        widget.cocom.isStarted = !widget.cocom.isStarted;
-        _routeFinished = !_routeFinished;
+        widget.cocom.isStarted = false;
         endTime = DateFormat('Hm').format(DateTime.now());
       });
     }
@@ -63,10 +76,40 @@ class _RouteTabState extends State<RouteTab> {
     setState(() {
       widget.cocom.isStarted = false;
       widget.cocom.startTime = '';
-      _routeFinished = false;
       startTime = '00:00';
       endTime = '00:00';
     });
+  }
+
+  void addCocomEnd() {
+    finishedList.add(
+      FinishedCocom(
+        startHour: '$startDate - $startTime',
+        endHour: '$endDate - $endTime',
+        id: widget.cocom.id,
+        name: widget.cocom.name,
+        locations: widget.cocom.locations,
+        information: widget.cocom.information,
+      ),
+    );
+    widget.cocomEnd();
+  }
+
+  Widget createButtons() {
+    if (_cocomEnd) {
+      return const Text('Cocom terminada');
+    } else {
+      if (widget.cocom.isStarted) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FinishRouteButton(update: endRoute, cancel: cancelRoute),
+          ],
+        );
+      } else {
+        return StartRouteButton(update: startRoute);
+      }
+    }
   }
 
   Widget buildColumn(String text, String time) {
@@ -98,7 +141,6 @@ class _RouteTabState extends State<RouteTab> {
 
   void _onAdd(String name) {
     var result = cocomsLocations.firstWhere((element) => element.name == name);
-    print(result);
     var irl = InRouteLocation(
         id: result.id,
         name: result.name,
@@ -147,15 +189,7 @@ class _RouteTabState extends State<RouteTab> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: widget.cocom.isStarted
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FinishRouteButton(
-                                update: endRoute, cancel: cancelRoute),
-                          ],
-                        )
-                      : StartRouteButton(update: startRoute),
+                  child: createButtons(),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
