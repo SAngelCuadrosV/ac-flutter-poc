@@ -26,6 +26,7 @@ class RouteTab extends StatefulWidget {
 
 class _RouteTabState extends State<RouteTab> {
   bool _routeStarted = false;
+  bool _routeFinished = false;
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now();
 
@@ -54,9 +55,21 @@ class _RouteTabState extends State<RouteTab> {
     if (_routeStarted) {
       setState(() {
         _routeStarted = !_routeStarted;
+        _routeFinished = !_routeFinished;
         endTime = DateTime.now();
       });
     }
+  }
+
+  void cancelRoute() {
+    setState(() {
+      _routeStarted = false;
+      _routeFinished = false;
+      startTime = DateTime(
+          startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+      endTime = DateTime(
+          startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+    });
   }
 
   Widget buildColumn(String text) {
@@ -124,7 +137,7 @@ class _RouteTabState extends State<RouteTab> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 15, top: 16, bottom: 8),
+            padding: const EdgeInsets.only(left: 15, top: 16, bottom: 8, right: 15),
             child: Column(
               children: [
                 Text(
@@ -137,7 +150,13 @@ class _RouteTabState extends State<RouteTab> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: _routeStarted
-                      ? FinishRouteButton(update: endRoute)
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FinishRouteButton(
+                                update: endRoute, cancel: cancelRoute),
+                          ],
+                        )
                       : StartRouteButton(update: startRoute),
                 ),
                 Row(
