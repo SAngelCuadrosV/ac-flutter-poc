@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
+import 'package:ac_drivers/assets/contents/models/finished_cocom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,12 +29,19 @@ class CocomsTab extends StatefulWidget {
 }
 
 class _CocomsTabState extends State<CocomsTab> {
-  static const _itemsLength = 3;
+  final cocomList = [
+    for (final co in cocomsContent.entries)
+      Cocom(
+        id: co.value.id,
+        name: co.value.name,
+        locations: co.value.locations,
+        information: co.value.information,
+      )
+  ];
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   late List<MaterialColor> colors;
-  late List<Cocom> cocomNames = [];
 
   @override
   void initState() {
@@ -41,7 +51,6 @@ class _CocomsTabState extends State<CocomsTab> {
 
   void _setData() {
     colors = getRandomColors(cocomsContent.length);
-    cocomsContent.forEach((k, v) => cocomNames.add(v));
   }
 
   Future<void> _refreshData() {
@@ -52,13 +61,14 @@ class _CocomsTabState extends State<CocomsTab> {
     );
   }
 
-  void cocomEnd() {
+  void cocomEnd(FinishedCocom fcocom) {
     // funciones para eliminar la cocom
     print('cocom terminada.');
+    print(fcocom.id);
   }
 
   Widget _listBuilder(BuildContext context, int index) {
-    if (index >= _itemsLength) return Container();
+    if (index >= cocomList.length) return Container();
 
     // Show a slightly different color palette. Show poppy-ier colors on iOS
     // due to lighter contrasting bars and tone it down on Android.
@@ -72,16 +82,18 @@ class _CocomsTabState extends State<CocomsTab> {
       child: Hero(
         tag: index,
         child: HeroAnimatingCocomCard(
-          cocom: cocomNames[index],
+          cocom: cocomList[index],
           color: color,
           heroAnimation: const AlwaysStoppedAnimation(0),
           onPressed: () => Navigator.of(context).push<void>(
             MaterialPageRoute(
               builder: (context) => RouteTab(
                 id: index,
-                cocom: cocomNames[index],
+                cocom: cocomList[index],
                 color: color,
-                cocomEnd: cocomEnd,
+                cocomEnd: (_) {
+                  cocomEnd(_);
+                },
               ),
             ),
           ),
@@ -132,7 +144,7 @@ class _CocomsTabState extends State<CocomsTab> {
         onRefresh: _refreshData,
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          itemCount: _itemsLength,
+          itemCount: cocomList.length,
           itemBuilder: _listBuilder,
         ),
       ),
@@ -159,7 +171,7 @@ class _CocomsTabState extends State<CocomsTab> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 _listBuilder,
-                childCount: _itemsLength,
+                childCount: cocomList.length,
               ),
             ),
           ),

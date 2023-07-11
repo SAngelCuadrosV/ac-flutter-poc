@@ -14,7 +14,7 @@ import '../../widgets/single_location.dart';
 import '../../assets/contents/models/cocom.dart';
 
 class RouteTab extends StatefulWidget {
-  final void Function() cocomEnd;
+  final void Function(FinishedCocom fcocom) cocomEnd;
   final Cocom cocom;
   final int id;
   final Color color;
@@ -52,10 +52,10 @@ class _RouteTabState extends State<RouteTab> {
   void startRoute() {
     if (!widget.cocom.isStarted) {
       widget.cocom.isStarted = true;
-      widget.cocom.startTime = DateFormat('Hm').format(DateTime.now());
+      widget.cocom.startTime = DateFormat('Hms').format(DateTime.now());
       startDate = DateFormat('yMMMd').format(DateTime.now());
       setState(() {
-        startTime = DateFormat('Hm').format(DateTime.now());
+        startTime = DateFormat('Hms').format(DateTime.now());
       });
     }
   }
@@ -66,7 +66,7 @@ class _RouteTabState extends State<RouteTab> {
       _cocomEnd = true;
       setState(() {
         widget.cocom.isStarted = false;
-        endTime = DateFormat('Hm').format(DateTime.now());
+        endTime = DateFormat('Hms').format(DateTime.now());
       });
       addCocomEnd();
     }
@@ -76,23 +76,22 @@ class _RouteTabState extends State<RouteTab> {
     setState(() {
       widget.cocom.isStarted = false;
       widget.cocom.startTime = '';
-      startTime = '00:00';
-      endTime = '00:00';
+      startTime = '00:00:00';
+      endTime = '00:00:00';
     });
   }
 
   void addCocomEnd() {
-    finishedList.add(
-      FinishedCocom(
+    final fcocom =  FinishedCocom(
         startHour: '$startDate - $startTime',
         endHour: '$endDate - $endTime',
         id: widget.cocom.id,
         name: widget.cocom.name,
         locations: widget.cocom.locations,
         information: widget.cocom.information,
-      ),
-    );
-    widget.cocomEnd();
+      );
+    finishedList.add(fcocom);
+    widget.cocomEnd(fcocom);
   }
 
   Widget createButtons() {
