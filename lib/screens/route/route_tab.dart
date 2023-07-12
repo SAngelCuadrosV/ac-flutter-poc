@@ -36,8 +36,8 @@ class _RouteTabState extends State<RouteTab> {
   bool _cocomEnd = false;
   String startDate = '';
   String endDate = '';
-  String startTime = '00:00';
-  String endTime = '00:00';
+  String startTime = '00:00:00';
+  String endTime = '00:00:00';
 
   @override
   void initState() {
@@ -52,21 +52,21 @@ class _RouteTabState extends State<RouteTab> {
   void startRoute() {
     if (!widget.cocom.isStarted) {
       widget.cocom.isStarted = true;
-      widget.cocom.startTime = DateFormat('Hms').format(DateTime.now());
-      startDate = DateFormat('yMMMd').format(DateTime.now());
+      widget.cocom.startTime = DateFormat("hh:mm:ss").format(DateTime.now());;
+      startDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
       setState(() {
-        startTime = DateFormat('Hms').format(DateTime.now());
+        startTime = DateFormat("hh:mm:ss").format(DateTime.now());
       });
     }
   }
 
   void endRoute() {
     if (widget.cocom.isStarted) {
-      endDate = DateFormat('yMMMd').format(DateTime.now());
+      endDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
       _cocomEnd = true;
       setState(() {
         widget.cocom.isStarted = false;
-        endTime = DateFormat('Hms').format(DateTime.now());
+        endTime =DateFormat("hh:mm:ss").format(DateTime.now());
       });
       addCocomEnd();
     }
@@ -83,8 +83,8 @@ class _RouteTabState extends State<RouteTab> {
 
   void addCocomEnd() {
     final fcocom =  FinishedCocom(
-        startHour: '$startDate - $startTime',
-        endHour: '$endDate - $endTime',
+        startHour: '$startDate $startTime',
+        endHour: '$endDate $endTime',
         id: widget.cocom.id,
         name: widget.cocom.name,
         locations: widget.cocom.locations,

@@ -16,10 +16,11 @@ InRouteLocation generateItem(Location location, int quantity) {
 
 List<FinishedCocom> finishedList = [
   FinishedCocom(
-    startHour: 'Jun 1, 2023 - 9:00',
-    endHour: 'Jun 1, 2023 - 14:00',
+    startHour: '2023-07-01 09:13:45',
+    endHour: '2023-07-01 14:11:11',
     id: 'COCOM 1 SAMEDI',
     name: 'COCOM 1 SAMEDI',
+    information: 'this is a test',
     locations: [
       generateItem(cocomsLocations[0], 5),
       generateItem(cocomsLocations[1], 2),
@@ -29,10 +30,11 @@ List<FinishedCocom> finishedList = [
     ],
   ),
   FinishedCocom(
-    startHour: 'Jun 5, 2023 - 7:00',
-    endHour: 'Jun 5, 2023 - 11:00',
+    startHour: '2023-07-05 07:13:14',
+    endHour: '2023-07-05 12:17:43',
     id: 'COCOM 2 SAMEDI',
     name: 'COCOM 2 SAMEDI',
+    information: 'test of a report cocom',
     locations: [
       generateItem(cocomsLocations[0], 1),
       generateItem(cocomsLocations[1], 2),
