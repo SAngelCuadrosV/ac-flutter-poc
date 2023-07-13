@@ -28,7 +28,11 @@ class SingleLocation extends StatelessWidget {
   }
 
   void _submit(BuildContext context) {
-    location.quantity = int.parse(controller.text);
+    try {
+      location.quantity = int.parse(controller.text);
+    } catch (e) {
+      location.quantity = 0;
+    }
     controller.clear();
     Navigator.pop(context);
   }

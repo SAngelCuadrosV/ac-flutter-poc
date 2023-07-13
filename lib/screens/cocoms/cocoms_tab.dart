@@ -3,11 +3,14 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:ac_drivers/assets/contents/models/finished_cocom.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../route/route_tab.dart';
 import '../../assets/contents/cocoms.dart';
@@ -61,10 +64,29 @@ class _CocomsTabState extends State<CocomsTab> {
     );
   }
 
-  void cocomEnd(FinishedCocom fcocom) {
-    // funciones para eliminar la cocom
-    print('cocom terminada.');
-    print(fcocom.id);
+  void cocomEnd(FinishedCocom fcocom) async {
+    final mail = FirebaseAuth.instance.currentUser!.email;
+    final user = mail!.split('@');
+    final url = Uri.https(
+        'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
+        '${user.first}.json');
+    var encodeList = [for (final loc in fcocom.locations) loc!.toJson()];
+
+    http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'user': user, 
+        'id': fcocom.id,
+        'name': fcocom.name,
+        'startHour': fcocom.startHour,
+        'endHour': fcocom.endHour,
+        'locations': encodeList,
+        'information': fcocom.information
+      }),
+    );
   }
 
   Widget _listBuilder(BuildContext context, int index) {

@@ -16,4 +16,14 @@ class FinishedCocom{
     this.information = '-',
     required this.locations,
   });
+
+  Map<String,dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'startHour': startHour,
+        'endHour': endHour,
+        'locations': locations.map((e) => e!.toJson()),
+        'information': information,
+      };
+
 }
