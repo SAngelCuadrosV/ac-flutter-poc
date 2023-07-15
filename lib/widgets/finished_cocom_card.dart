@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:ac_drivers/widgets/modification_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../assets/contents/models/finished_cocom.dart';
 

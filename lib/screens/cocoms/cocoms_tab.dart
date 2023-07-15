@@ -1,17 +1,13 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ac_drivers/assets/contents/models/finished_cocom.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../assets/contents/models/finished_cocom.dart';
+import '../../service/auth/auth_service.dart';
 import '../route/route_tab.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../assets/contents/models/cocom.dart';
@@ -65,11 +61,7 @@ class _CocomsTabState extends State<CocomsTab> {
   }
 
   void cocomEnd(FinishedCocom fcocom) async {
-    final mail = FirebaseAuth.instance.currentUser!.email;
-    final user = mail!.split('@');
-    final url = Uri.https(
-        'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
-        '${user.first}.json');
+    final url = await AuthService().getUrl();
     var encodeList = [for (final loc in fcocom.locations) loc!.toJson()];
 
     http.post(
@@ -78,7 +70,6 @@ class _CocomsTabState extends State<CocomsTab> {
         'Content-Type': 'application/json',
       },
       body: json.encode({
-        'user': user, 
         'id': fcocom.id,
         'name': fcocom.name,
         'startHour': fcocom.startHour,

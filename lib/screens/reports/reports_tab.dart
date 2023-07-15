@@ -1,13 +1,13 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:ac_drivers/assets/contents/models/in_route_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
-import '../../assets/contents/finished_cocoms.dart';
+import '../../assets/contents/models/finished_cocom.dart';
+import '../../service/auth/auth_service.dart';
 import '../../widgets/finished_cocom_card.dart';
 import '../../widgets/widgets.dart';
 
@@ -23,13 +23,103 @@ class ReportsTab extends StatefulWidget {
 }
 
 class _ReportsTabState extends State<ReportsTab> {
+  List<FinishedCocom> _finishedList = [];
+  String? _error;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadCocoms();
   }
 
-  
+  Widget _content() {
+    if (_error != null) {
+      return Center(
+        child: Text(_error!),
+      );
+    } else {
+      if (_isLoading) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else {
+        if (_finishedList.isEmpty) {
+          return const Center(
+            child: Text('no hay datos.'),
+          );
+        } else {
+          return ListView(
+            children: [
+              for (final fcocom in _finishedList)
+                FinishedCocomCard(cocom: fcocom)
+            ].reversed.toList(),
+          );
+        }
+      }
+    }
+  }
+
+  void _loadCocoms() async {
+    final url = await AuthService().getUrl();
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode >= 400) {
+        setState(() {
+          _error = 'Failed to fetch data. Please try again later.';
+        });
+      }
+
+      if (response.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final Map<String, dynamic> listData = json.decode(response.body);
+      final List<FinishedCocom> loadedCocoms = [];
+      final List<InRouteLocation> locFCocoms = [];
+      for (final cocom in listData.entries) {
+        locFCocoms.clear();
+        for (var loc in cocom.value['locations']) {
+          locFCocoms.add(InRouteLocation(
+              id: loc['id'],
+              name: loc['name'],
+              postal: loc['postal'],
+              address: loc['address'],
+              information: loc['information'],
+              phone: loc['phone'],
+              quantity: loc['quantity']));
+        }
+        
+        loadedCocoms.add(
+          FinishedCocom(
+            startHour: cocom.value['startHour'],
+            endHour: cocom.value['endHour'],
+            id: cocom.value['id'],
+            name: cocom.value['name'],
+            locations: locFCocoms,
+            information: cocom.value['information'],
+          ),
+        );
+      }
+
+      setState(() {
+        _finishedList = loadedCocoms;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Something went wrong. Please try again later.';
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
   // ===========================================================================
   // Non-shared code below because this tab uses different scaffolds.
   // ===========================================================================
@@ -39,24 +129,14 @@ class _ReportsTabState extends State<ReportsTab> {
       appBar: AppBar(
         title: const Text(ReportsTab.title),
       ),
-      body: ListView(
-        children: [
-          for (final fcocom in finishedList)
-            FinishedCocomCard(cocom: fcocom)
-        ].reversed.toList(),
-      ),
+      body: _content(),
     );
   }
 
   Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(),
-      child: ListView(
-        children: [
-          for (final fcocom in finishedList)
-            FinishedCocomCard(cocom: fcocom)
-        ].reversed.toList(),
-      ),
+      child: _content(),
     );
   }
 
