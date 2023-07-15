@@ -94,12 +94,11 @@ class _ReportsTabState extends State<ReportsTab> {
               phone: loc['phone'],
               quantity: loc['quantity']));
         }
-        
         loadedCocoms.add(
           FinishedCocom(
             startHour: cocom.value['startHour'],
             endHour: cocom.value['endHour'],
-            id: cocom.value['id'],
+            id: cocom.key,
             name: cocom.value['name'],
             locations: locFCocoms,
             information: cocom.value['information'],

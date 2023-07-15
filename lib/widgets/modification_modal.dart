@@ -1,8 +1,13 @@
 //import 'dart:convert';
 
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../assets/contents/models/finished_cocom.dart';
@@ -34,6 +39,12 @@ class _ModifyModalState extends State<ModifyModal> {
   bool _isSending = false;
 
   void _saveItem() async {
+    final user = await FirebaseAuth.instance.currentUser!.email;
+    final mail = user!.split('@');
+    final url = Uri.https(
+        'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
+        '${mail.first}/${widget.fCocom.id}.json');
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
@@ -42,6 +53,25 @@ class _ModifyModalState extends State<ModifyModal> {
         widget.fCocom.endHour = '$_enteredEndDate $_enteredEndTime';
         Navigator.of(context).pop();
       });
+    }
+
+    try {
+      http.patch(
+        url,
+        body: json.encode({
+          'id': widget.fCocom.id,
+          'name': widget.fCocom.name,
+          'startHour': '$_enteredStartDate $_enteredStartTime',
+          'endHour': '$_enteredEndDate $_enteredEndTime',
+          'locations': widget.fCocom.locations,
+          'information': widget.fCocom.information
+        }),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Something went wrong.')));
+      Navigator.of(context).pop();
     }
   }
 
