@@ -65,7 +65,7 @@ class FinishRouteButton extends StatelessWidget {
                   content: _startMessage,
                   actions: [
                     TextButton(
-                      child: const Text('continuar la cocom'),
+                      child: const Text('Continuar la cocom'),
                       onPressed: () => Navigator.pop(context),
                     ),
                     ElevatedButton(
@@ -99,7 +99,7 @@ class FinishRouteButton extends StatelessWidget {
           context: context,
           builder: (context) {
             return CupertinoActionSheet(
-              title: const Text('Finalizar Cocom?'),
+              title: const Text('¿Finalizar Cocom?'),
               message: _startMessage,
               actions: [
                 CupertinoActionSheetAction(

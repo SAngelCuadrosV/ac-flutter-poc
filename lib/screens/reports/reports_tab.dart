@@ -46,7 +46,7 @@ class _ReportsTabState extends State<ReportsTab> {
       } else {
         if (_finishedList.isEmpty) {
           return const Center(
-            child: Text('no hay datos.'),
+            child: Text('No hay datos.'),
           );
         } else {
           return ListView(
@@ -68,7 +68,7 @@ class _ReportsTabState extends State<ReportsTab> {
 
       if (response.statusCode >= 400) {
         setState(() {
-          _error = 'Failed to fetch data. Please try again later.';
+          _error = 'Error al buscar los datos, intenta más tarde.';
         });
       }
 
@@ -112,7 +112,7 @@ class _ReportsTabState extends State<ReportsTab> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Something went wrong. Please try again later.';
+        _error = 'Algo salió mal, intentalo más tarde';
       });
     }
     setState(() {

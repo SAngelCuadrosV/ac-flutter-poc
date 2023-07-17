@@ -70,7 +70,7 @@ class _ModifyModalState extends State<ModifyModal> {
     } catch (e) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Something went wrong.')));
+          .showSnackBar(const SnackBar(content: Text('algo salió mal. No se modificó la Cocom')));
       Navigator.of(context).pop();
     }
   }
@@ -103,7 +103,7 @@ class _ModifyModalState extends State<ModifyModal> {
                       DateFormat("yyyy-MM-dd").parse(value!);
                       print(value);
                     } catch (e) {
-                      return 'Fecha invalida';
+                      return 'Formato no válido';
                     }
                     return null;
                   },
@@ -122,7 +122,7 @@ class _ModifyModalState extends State<ModifyModal> {
                     try {
                       DateFormat("hh:mm:ss").parse(value!);
                     } catch (e) {
-                      return 'hora invalida';
+                      return 'Hora no válida';
                     }
                     return null;
                   },
@@ -143,7 +143,7 @@ class _ModifyModalState extends State<ModifyModal> {
                       DateFormat("yyyy-MM-dd").parse(value!);
                       print(value);
                     } catch (e) {
-                      return 'Fecha invalida';
+                      return 'Formato no válido';
                     }
                     return null;
                   },
@@ -162,7 +162,7 @@ class _ModifyModalState extends State<ModifyModal> {
                     try {
                       DateFormat("hh:mm:ss").parse(value!);
                     } catch (e) {
-                      return 'hora invalida';
+                      return 'Hora no válida';
                     }
                     return null;
                   },
@@ -182,7 +182,7 @@ class _ModifyModalState extends State<ModifyModal> {
                               width: 16,
                               child: CircularProgressIndicator(),
                             )
-                          : const Text('Modify'),
+                          : const Text('Modificar'),
                     ),
                     TextButton(
                       onPressed: _isSending
@@ -190,7 +190,7 @@ class _ModifyModalState extends State<ModifyModal> {
                           : () {
                               Navigator.pop(context);
                             },
-                      child: const Text('Cancel'),
+                      child: const Text('Cancelar'),
                     ),
                   ],
                 ),

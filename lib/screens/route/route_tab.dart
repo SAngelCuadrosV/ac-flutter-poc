@@ -96,7 +96,7 @@ class _RouteTabState extends State<RouteTab> {
 
   Widget createButtons() {
     if (_cocomEnd) {
-      return const Text('Cocom terminada');
+      return const Text('Cocom Finalizada');
     } else {
       if (widget.cocom.isStarted) {
         return Row(
