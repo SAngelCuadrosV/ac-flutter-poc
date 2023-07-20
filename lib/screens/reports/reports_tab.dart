@@ -85,14 +85,18 @@ class _ReportsTabState extends State<ReportsTab> {
       for (final cocom in listData.entries) {
         locFCocoms.clear();
         for (var loc in cocom.value['locations']) {
-          locFCocoms.add(InRouteLocation(
+          locFCocoms.add(
+            InRouteLocation(
               id: loc['id'],
               name: loc['name'],
               postal: loc['postal'],
               address: loc['address'],
               information: loc['information'],
               phone: loc['phone'],
-              quantity: loc['quantity']));
+              quantity: loc['quantity'],
+              hour: loc['hour'],
+            ),
+          );
         }
         loadedCocoms.add(
           FinishedCocom(

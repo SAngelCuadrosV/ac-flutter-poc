@@ -26,7 +26,7 @@ class ModifyModal extends StatefulWidget {
 
 class _ModifyModalState extends State<ModifyModal> {
   final _inputformaters = <TextInputFormatter>[
-    FilteringTextInputFormatter.allow(RegExp(r'[0-9 :]')),
+    FilteringTextInputFormatter.allow(RegExp(r'[0-9 :-]')),
     FilteringTextInputFormatter.deny(RegExp(r'[+*/(){}{}]')),
   ];
   final _formKey = GlobalKey<FormState>();
@@ -43,7 +43,7 @@ class _ModifyModalState extends State<ModifyModal> {
     final mail = user!.split('@');
     final url = Uri.https(
         'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
-        '${mail.first}/${widget.fCocom.id}.json');
+        'Reports/${mail.first}/${widget.fCocom.id}.json');
 
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();

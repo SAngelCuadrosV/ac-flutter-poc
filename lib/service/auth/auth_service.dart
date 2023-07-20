@@ -26,7 +26,7 @@ class AuthService {
     final mail = user!.split('@');
       final url = Uri.https(
         'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
-        '${mail.first}.json');
+        'Reports/${mail.first}.json');
       return url;
   }
 }
