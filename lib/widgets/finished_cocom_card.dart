@@ -97,11 +97,14 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
           width: double.maxFinite,
         ),
         const Text(
-          'Ubiaciones:',
+          'Ubiaciones:\n',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         for (final location in widget.cocom.locations)
-          Text('- ${location!.name}: cantidad recogida ${location.quantity}')
+          Text(
+            '- ${location!.name}:\nCantidad recogida ${location.quantity}\nHora de recolección: ${location.hour}\n',
+            textAlign: TextAlign.start,
+          ),
       ],
     );
   }

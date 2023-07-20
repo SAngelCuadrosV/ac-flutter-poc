@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 import '../assets/contents/models/in_route_location.dart';
 import '../widgets/widgets.dart';
@@ -16,7 +17,9 @@ class SingleLocation extends StatelessWidget {
     super.key,
   });
 
-  final controller = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final controllerQuantity = TextEditingController();
+  final controllerHour = TextEditingController();
 
   Image get getImage {
     return Image.asset('lib/assets/images/noooo.gif');
@@ -28,31 +31,83 @@ class SingleLocation extends StatelessWidget {
   }
 
   void _submit(BuildContext context) {
-    try {
-      location.quantity = int.parse(controller.text);
-    } catch (e) {
-      location.quantity = 0;
+    if (_formKey.currentState!.validate()) {
+      print('validado');
+      _formKey.currentState?.save();
+      controllerQuantity.clear();
+      controllerHour.clear();
+      Navigator.pop(context);
     }
-    controller.clear();
-    Navigator.pop(context);
   }
 
   Widget _buildAlertAndroid(BuildContext context) {
     return AlertDialog(
       title: const Text('Info'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _setText(),
-          TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: location.quantity.toString()),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-            ],
-          )
-        ],
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _setText(),
+            TextFormField(
+              controller: controllerQuantity,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  hintText: location.quantity.toString()),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+              ],
+              validator: (value) {
+                if (value == null || value.isEmpty && location.quantity == 0) {
+                  return 'Ingresa la cantidad recogida';
+                }
+                return null;
+              },
+              onSaved: (newValue) {
+                if (location.quantity != 0 && newValue!.isEmpty) {
+                  location.quantity = location.quantity;
+                } else {
+                  final int aux = int.parse(newValue!);
+                  if (aux != 0 || newValue.isNotEmpty) {
+                    location.quantity = aux;
+                    print(location.quantity);
+                  }
+                }
+              },
+            ),
+            TextFormField(
+              controller: controllerHour,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  helperText:
+                      'Si no rellenas el espacio\nse usará la hora actual',
+                  hintText: location.hour != '00:00:00'
+                      ? location.hour
+                      : 'Hora de recogida (hh:mm:ss)'),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9 :S]')),
+                FilteringTextInputFormatter.deny(RegExp(r'[+*/(){}{}]')),
+              ],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return null;
+                }
+                final xdL = value.split(':');
+                if (int.parse(xdL[0]) > 23) return 'Formato inválido';
+                if (int.parse(xdL[1]) > 59) return 'Formato inválido';
+                if (int.parse(xdL[2]) > 59) return 'Formato inválido';
+                return null;
+              },
+              onSaved: (newValue) {
+                if (newValue == null || newValue.isEmpty) {
+                  location.hour = DateFormat("hh:mm:ss").format(DateTime.now());
+                } else {
+                  location.hour = newValue;
+                }
+              },
+            ),
+          ],
+        ),
       ),
       actions: [
         ElevatedButton(
@@ -78,7 +133,7 @@ class SingleLocation extends StatelessWidget {
           const SizedBox(height: 16),
           const Text('Cantidad:'),
           CupertinoTextFormFieldRow(
-            controller: controller,
+            controller: controllerQuantity,
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))

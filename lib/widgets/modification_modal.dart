@@ -26,7 +26,7 @@ class ModifyModal extends StatefulWidget {
 
 class _ModifyModalState extends State<ModifyModal> {
   final _inputformaters = <TextInputFormatter>[
-    FilteringTextInputFormatter.allow(RegExp(r'[0-9 :-]')),
+    FilteringTextInputFormatter.allow(RegExp(r'[0-9 :]')),
     FilteringTextInputFormatter.deny(RegExp(r'[+*/(){}{}]')),
   ];
   final _formKey = GlobalKey<FormState>();

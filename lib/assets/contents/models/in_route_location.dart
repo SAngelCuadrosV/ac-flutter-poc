@@ -5,6 +5,7 @@ class InRouteLocation {
   final String address;
   final String phone;
   final String information;
+  String hour;
   int quantity;
 
   InRouteLocation({
@@ -15,6 +16,7 @@ class InRouteLocation {
     this.quantity = 0,
     this.phone = '-',
     this.information = '-',
+    this.hour = '00:00:00'
   });
 
   Map<String,dynamic> toJson() => {
@@ -25,5 +27,6 @@ class InRouteLocation {
         'address': address,
         'phone': phone,
         'information': information,
+        'hour': hour
       };
 }
