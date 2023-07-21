@@ -52,7 +52,7 @@ class _RouteTabState extends State<RouteTab> {
   void startRoute() {
     if (!widget.cocom.isStarted) {
       widget.cocom.isStarted = true;
-      widget.cocom.startTime = DateFormat("hh:mm:ss").format(DateTime.now());;
+      widget.cocom.startTime = DateFormat("hh:mm:ss").format(DateTime.now());
       startDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
       setState(() {
         startTime = DateFormat("hh:mm:ss").format(DateTime.now());
@@ -61,14 +61,23 @@ class _RouteTabState extends State<RouteTab> {
   }
 
   void endRoute() {
-    if (widget.cocom.isStarted) {
-      endDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      _cocomEnd = true;
-      setState(() {
-        widget.cocom.isStarted = false;
-        endTime = DateFormat("hh:mm:ss").format(DateTime.now());
-      });
-      addCocomEnd();
+    if (widget.cocom.locations.isNotEmpty) {
+      if (widget.cocom.isStarted) {
+        endDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+        _cocomEnd = true;
+        setState(() {
+          widget.cocom.isStarted = false;
+          endTime = DateFormat("hh:mm:ss").format(DateTime.now());
+        });
+        addCocomEnd();
+      }
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Agrega una locación para poder finalizar la Cocom'),
+        ),
+      );
     }
   }
 
@@ -82,14 +91,14 @@ class _RouteTabState extends State<RouteTab> {
   }
 
   void addCocomEnd() {
-    final fcocom =  FinishedCocom(
-        startHour: '$startDate $startTime',
-        endHour: '$endDate $endTime',
-        id: widget.cocom.id,
-        name: widget.cocom.name,
-        locations: widget.cocom.locations,
-        information: widget.cocom.information,
-      );
+    final fcocom = FinishedCocom(
+      startHour: '$startDate $startTime',
+      endHour: '$endDate $endTime',
+      id: widget.cocom.id,
+      name: widget.cocom.name,
+      locations: widget.cocom.locations,
+      information: widget.cocom.information,
+    );
     finishedList.add(fcocom);
     widget.cocomEnd(fcocom);
   }
@@ -208,13 +217,21 @@ class _RouteTabState extends State<RouteTab> {
             color: Colors.grey,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.cocom.locations.length,
-              itemBuilder: (ctx, index) => SingleLocation(
-                location: widget.cocom.locations[index]!,
-                function: _onDismiss,
-              ),
-            ),
+            child: widget.cocom.locations.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No hay ubicaciones\n¡Agrega una!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: widget.cocom.locations.length,
+                    itemBuilder: (ctx, index) => SingleLocation(
+                      location: widget.cocom.locations[index]!,
+                      function: _onDismiss,
+                    ),
+                  ),
           ),
         ],
       ),

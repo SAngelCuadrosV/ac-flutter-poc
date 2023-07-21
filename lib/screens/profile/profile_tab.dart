@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
 import '../../widgets/widgets.dart';
@@ -84,15 +85,15 @@ class ProfileTab extends StatelessWidget {
       navigationBar: CupertinoNavigationBar(
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: ExpressTab.iosIcon,
+          child: const Icon(CupertinoIcons.time),
           onPressed: () {
             // This pushes the settings page as a full page modal dialog on top
             // of the tab bar and everything.
             Navigator.of(context, rootNavigator: true).push<void>(
               CupertinoPageRoute(
-                title: ExpressTab.title,
+                title: 'EXPRESS',
                 fullscreenDialog: true,
-                builder: (context) => const ExpressTab(),
+                builder: (context) => ExpressTab(cocom: cocomExpress),
               ),
             );
           },

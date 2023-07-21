@@ -58,3 +58,10 @@ Map<String, Cocom> cocomsContent = {
     ],
   ),
 };
+
+final cocomExpress = Cocom(
+  id: 'expess',
+  name: 'COCOM EXPRESS',
+  locations: [],
+  information: 'información básica (cambiar luego)',
+);
