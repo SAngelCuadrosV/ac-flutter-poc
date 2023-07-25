@@ -43,6 +43,11 @@ class _RouteTabState extends State<RouteTab> {
   void initState() {
     if (widget.cocom.isStarted) {
       startTime = widget.cocom.startTime;
+    } else {
+      for (final loc in widget.cocom.locations) {
+        loc!.quantity = 0;
+        loc.hour = '00:00:00';
+      }
     }
     startRoute;
     endRoute;
@@ -105,7 +110,10 @@ class _RouteTabState extends State<RouteTab> {
 
   Widget createButtons() {
     if (_cocomEnd) {
-      return const Text('Cocom Finalizada');
+      return const Text(
+        'Cocom Finalizada',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      );
     } else {
       if (widget.cocom.isStarted) {
         return Row(

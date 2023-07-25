@@ -60,11 +60,6 @@ class _ReportsTabState extends State<ReportsTab> {
     }
   }
 
-  List<InRouteLocation> _genList(List<InRouteLocation> asd) {
-    final List<InRouteLocation> xd = asd;
-    return xd;
-  }
-
   void _loadCocoms() async {
     final url = await AuthService().getUrl();
 
@@ -111,7 +106,7 @@ class _ReportsTabState extends State<ReportsTab> {
             endHour: cocom.value['endHour'],
             id: cocom.key,
             name: cocom.value['name'],
-            locations: _genList(locFCocoms),
+            locations: locFCocoms,
             information: cocom.value['information'],
           ),
         );

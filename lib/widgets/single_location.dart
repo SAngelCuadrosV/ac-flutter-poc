@@ -7,36 +7,61 @@ import 'package:intl/intl.dart';
 import '../assets/contents/models/in_route_location.dart';
 import '../widgets/widgets.dart';
 
-class SingleLocation extends StatelessWidget {
+class SingleLocation extends StatefulWidget {
   final InRouteLocation location;
   final Function(String key) function;
 
-  SingleLocation({
+  const SingleLocation({
     required this.function,
     required this.location,
     super.key,
   });
 
+  @override
+  State<SingleLocation> createState() => _SingleLocationState();
+}
+
+class _SingleLocationState extends State<SingleLocation> {
   final _formKey = GlobalKey<FormState>();
+
   final controllerQuantity = TextEditingController();
+
   final controllerHour = TextEditingController();
 
   Image get getImage {
     return Image.asset('lib/assets/images/noooo.gif');
   }
 
-  Text _setText() {
+  Text _setInfo(String txt, bool confirm) {
     return Text(
-        'Nombre: ${location.name}\nDirección: ${location.address}\nPostal: ${location.postal}\nTeléfono: ${location.phone}\nInfo: ${location.information}');
+      txt,
+      style: confirm
+          ? GoogleFonts.raleway(
+              fontWeight: FontWeight.bold,
+            )
+          : GoogleFonts.raleway(fontSize: 12),
+    );
+  }
+
+  Widget _setText() {
+    return Column(
+      children: [
+        Text('Nombre: ${widget.location.name}'),
+        Text('Dirección: ${widget.location.address}'),
+        Text('Postal: ${widget.location.postal}'),
+        Text('Teléfono: ${widget.location.phone}'),
+        Text('Info: ${widget.location.information}'),
+      ],
+    );
   }
 
   void _submit(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      print('validado');
       _formKey.currentState?.save();
       controllerQuantity.clear();
       controllerHour.clear();
       Navigator.pop(context);
+      setState(() {});
     }
   }
 
@@ -53,24 +78,25 @@ class SingleLocation extends StatelessWidget {
               controller: controllerQuantity,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                  hintText: location.quantity.toString()),
+                  hintText: widget.location.quantity.toString()),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
               ],
               validator: (value) {
-                if (value == null || value.isEmpty && location.quantity == 0) {
+                if (value == null ||
+                    value.isEmpty && widget.location.quantity == 0) {
                   return 'Ingresa la cantidad recogida';
                 }
                 return null;
               },
               onSaved: (newValue) {
-                if (location.quantity != 0 && newValue!.isEmpty) {
-                  location.quantity = location.quantity;
+                if (widget.location.quantity != 0 && newValue!.isEmpty) {
+                  widget.location.quantity = widget.location.quantity;
                 } else {
                   final int aux = int.parse(newValue!);
                   if (aux != 0 || newValue.isNotEmpty) {
-                    location.quantity = aux;
-                    print(location.quantity);
+                    widget.location.quantity = aux;
+                    print(widget.location.quantity);
                   }
                 }
               },
@@ -81,8 +107,8 @@ class SingleLocation extends StatelessWidget {
               decoration: InputDecoration(
                   helperText:
                       'Si no rellenas el espacio\nse usará la hora actual',
-                  hintText: location.hour != '00:00:00'
-                      ? location.hour
+                  hintText: widget.location.hour != '00:00:00'
+                      ? widget.location.hour
                       : 'Hora de recogida (hh:mm:ss)'),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9 :S]')),
@@ -100,9 +126,10 @@ class SingleLocation extends StatelessWidget {
               },
               onSaved: (newValue) {
                 if (newValue == null || newValue.isEmpty) {
-                  location.hour = DateFormat("hh:mm:ss").format(DateTime.now());
+                  widget.location.hour =
+                      DateFormat("hh:mm:ss").format(DateTime.now());
                 } else {
-                  location.hour = newValue;
+                  widget.location.hour = newValue;
                 }
               },
             ),
@@ -169,7 +196,7 @@ class SingleLocation extends StatelessWidget {
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            function(location.id);
+            widget.function(widget.location.id);
             Navigator.of(context).pop(true);
           },
           child: const Text("ELIMINAR"),
@@ -192,7 +219,7 @@ class SingleLocation extends StatelessWidget {
         CupertinoActionSheetAction(
           isDestructiveAction: true,
           onPressed: () {
-            function(location.id);
+            widget.function(widget.location.id);
             Navigator.of(context).pop(true);
           },
           child: const Text("ELIMINAR"),
@@ -211,7 +238,7 @@ class SingleLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(location.id),
+      key: Key(widget.location.id),
       confirmDismiss: (direction) async {
         return showDialog(
             context: context,
@@ -239,25 +266,36 @@ class SingleLocation extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: getImage,
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                location.name,
-                style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                location.postal,
-                style: GoogleFonts.raleway(fontSize: 12),
-              ),
-              Text(
-                location.address,
-                style: GoogleFonts.raleway(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                location.phone,
-                style: GoogleFonts.raleway(fontSize: 12),
+              _setInfo(widget.location.name, true),
+              _setInfo(widget.location.postal, false),
+              _setInfo(widget.location.address,true),
+              _setInfo(widget.location.phone, false),
+              Row(
+                children: [
+                  widget.location.quantity == 0
+                      ? const Icon(
+                          Icons.cancel_rounded,
+                          size: 20,
+                          color: Colors.red,
+                        )
+                      : const Icon(
+                          Icons.check_circle,
+                          size: 20,
+                          color: Colors.green,
+                        ),
+                  const SizedBox(width: 10),
+                  widget.location.quantity == 0
+                      ? const Text(
+                          'No recogido',
+                          style: TextStyle(color: Colors.red),
+                        )
+                      : const Text('Recogido',
+                          style: TextStyle(color: Colors.green)),
+                ],
               ),
             ],
           )
