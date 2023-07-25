@@ -53,11 +53,16 @@ class _ReportsTabState extends State<ReportsTab> {
             children: [
               for (final fcocom in _finishedList)
                 FinishedCocomCard(cocom: fcocom)
-            ].reversed.toList(),
+            ],
           );
         }
       }
     }
+  }
+
+  List<InRouteLocation> _genList(List<InRouteLocation> asd) {
+    final List<InRouteLocation> xd = asd;
+    return xd;
   }
 
   void _loadCocoms() async {
@@ -81,9 +86,10 @@ class _ReportsTabState extends State<ReportsTab> {
 
       final Map<String, dynamic> listData = json.decode(response.body);
       final List<FinishedCocom> loadedCocoms = [];
-      final List<InRouteLocation> locFCocoms = [];
+
       for (final cocom in listData.entries) {
-        locFCocoms.clear();
+      final List<InRouteLocation> locFCocoms = [];
+
         for (var loc in cocom.value['locations']) {
           locFCocoms.add(
             InRouteLocation(
@@ -98,30 +104,29 @@ class _ReportsTabState extends State<ReportsTab> {
             ),
           );
         }
+
         loadedCocoms.add(
           FinishedCocom(
             startHour: cocom.value['startHour'],
             endHour: cocom.value['endHour'],
             id: cocom.key,
             name: cocom.value['name'],
-            locations: locFCocoms,
+            locations: _genList(locFCocoms),
             information: cocom.value['information'],
           ),
         );
       }
 
       setState(() {
-        _finishedList = loadedCocoms;
+        _finishedList = loadedCocoms.reversed.toList();
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _error = 'Algo salió mal, intentalo más tarde';
+        _isLoading = false;
       });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
   // ===========================================================================
   // Non-shared code below because this tab uses different scaffolds.

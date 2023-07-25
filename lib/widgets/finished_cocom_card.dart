@@ -100,9 +100,9 @@ class _FinishedCocomCardState extends State<FinishedCocomCard> {
           'Ubiaciones:\n',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        for (final location in widget.cocom.locations)
+        for (final loc in widget.cocom.locations)
           Text(
-            '- ${location!.name}:\nCantidad recogida ${location.quantity}\nHora de recolección: ${location.hour}\n',
+            '- ${loc!.name}:\nCantidad recogida ${loc.quantity}\nHora de recolección: ${loc.hour}\n',
             textAlign: TextAlign.start,
           ),
       ],
