@@ -1,15 +1,14 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:ac_drivers/assets/contents/models/in_route_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
-import '../../assets/contents/models/in_route_location.dart';
-import '../../assets/contents/cocoms.dart';
+import '../../assets/contents/models/finished_cocom.dart';
+import '../../service/auth/auth_service.dart';
+import '../../widgets/finished_cocom_card.dart';
 import '../../widgets/widgets.dart';
 
 class ReportsTab extends StatefulWidget {
@@ -24,66 +23,106 @@ class ReportsTab extends StatefulWidget {
 }
 
 class _ReportsTabState extends State<ReportsTab> {
-  final List<InRouteLocation?>? locationItems =
-      cocomsContent['COCOM 3 SAMEDI']?.locations;
+  List<FinishedCocom> _finishedList = [];
+  String? _error;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadCocoms();
   }
 
-  Widget locationCard(InRouteLocation? location) {
-    return Container(
-      key: Key(location!.name),
-      child: Card(
-        elevation: 1.5,
-        margin: const EdgeInsets.fromLTRB(6, 12, 6, 0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: InkWell(
-          // Make it splash on Android. It would happen automatically if this
-          // was a real card but this is just a demo. Skip the splash on iOS.
-          onTap: defaultTargetPlatform == TargetPlatform.android ? null : () {},
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Text(
-                    "X",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(left: 16)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        location.name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(top: 8)),
-                      Text(
-                        location.information,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+  Widget _content() {
+    if (_error != null) {
+      return Center(
+        child: Text(_error!),
+      );
+    } else {
+      if (_isLoading) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else {
+        if (_finishedList.isEmpty) {
+          return const Center(
+            child: Text('No hay datos.'),
+          );
+        } else {
+          return ListView(
+            children: [
+              for (final fcocom in _finishedList)
+                FinishedCocomCard(cocom: fcocom)
+            ],
+          );
+        }
+      }
+    }
+  }
+
+  void _loadCocoms() async {
+    final url = await AuthService().getUrl();
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode >= 400) {
+        setState(() {
+          _error = 'Error al buscar los datos, intenta más tarde.';
+        });
+      }
+
+      if (response.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final Map<String, dynamic> listData = json.decode(response.body);
+      final List<FinishedCocom> loadedCocoms = [];
+
+      for (final cocom in listData.entries) {
+      final List<InRouteLocation> locationsList = [];
+
+        for (var loc in cocom.value['locations']) {
+          locationsList.add(
+            InRouteLocation(
+              id: loc['id'],
+              name: loc['name'],
+              postal: loc['postal'],
+              address: loc['address'],
+              information: loc['information'],
+              phone: loc['phone'],
+              quantity: loc['quantity'],
+              hour: loc['hour'],
             ),
-          ),
-        ),
-      ),
-    );
-  }
+          );
+        }
 
+        loadedCocoms.add(
+          FinishedCocom(
+            startHour: cocom.value['startHour'],
+            endHour: cocom.value['endHour'],
+            id: cocom.key,
+            name: cocom.value['name'],
+            locations: locationsList,
+            information: cocom.value['information'],
+          ),
+        );
+      }
+
+      setState(() {
+        _finishedList = loadedCocoms.reversed.toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Algo salió mal, intentalo más tarde';
+        _isLoading = false;
+      });
+    }
+  }
   // ===========================================================================
   // Non-shared code below because this tab uses different scaffolds.
   // ===========================================================================
@@ -93,44 +132,14 @@ class _ReportsTabState extends State<ReportsTab> {
       appBar: AppBar(
         title: const Text(ReportsTab.title),
       ),
-      body: ReorderableListView(
-        proxyDecorator: proxyDecorator,
-        children: <Widget>[
-          for (int index = 0; index < locationItems!.length; index += 1)
-            locationCard(locationItems![index])
-        ],
-        onReorder: (int oldIndex, int newIndex) {
-          setState(() {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
-            locationItems!.insert(newIndex, item);
-          });
-        },
-      ),
+      body: _content(),
     );
   }
 
   Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(),
-      child: ReorderableListView(
-        proxyDecorator: proxyDecorator,
-        children: <Widget>[
-          for (int index = 0; index < locationItems!.length; index += 1)
-            locationCard(locationItems![index])
-        ],
-        onReorder: (int oldIndex, int newIndex) {
-          setState(() {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final InRouteLocation? item = locationItems!.removeAt(oldIndex);
-            locationItems!.insert(newIndex, item);
-          });
-        },
-      ),
+      child: _content(),
     );
   }
 

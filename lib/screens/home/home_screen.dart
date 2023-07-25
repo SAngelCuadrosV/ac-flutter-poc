@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../assets/contents/cocoms.dart';
 import '../reports/reports_tab.dart';
 import '../profile/profile_tab.dart';
 import '../express/express_tab.dart';
@@ -24,7 +25,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
       androidDrawer: _AndroidDrawer(),
     );
   }
-  
+
   Widget _buildIosHomePage(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
@@ -126,12 +127,14 @@ class _AndroidDrawer extends StatelessWidget {
             child: Divider(),
           ),
           ListTile(
-            leading: ExpressTab.androidIcon,
-            title: const Text(ExpressTab.title),
+            leading: const Icon(Icons.time_to_leave),
+            title: const Text('Express'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const ExpressTab()));
+              Navigator.push<void>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ExpressTab(cocom: cocomExpress)));
             },
           ),
         ],

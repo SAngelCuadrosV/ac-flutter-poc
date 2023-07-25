@@ -1,11 +1,13 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
+import '../../assets/contents/models/finished_cocom.dart';
+import '../../service/auth/auth_service.dart';
 import '../route/route_tab.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../assets/contents/models/cocom.dart';
@@ -26,12 +28,19 @@ class CocomsTab extends StatefulWidget {
 }
 
 class _CocomsTabState extends State<CocomsTab> {
-  static const _itemsLength = 3;
+  final cocomList = [
+    for (final co in cocomsContent.entries)
+      Cocom(
+        id: co.value.id,
+        name: co.value.name,
+        locations: co.value.locations,
+        information: co.value.information,
+      )
+  ];
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   late List<MaterialColor> colors;
-  late List<Cocom> cocomNames = [];
 
   @override
   void initState() {
@@ -41,7 +50,6 @@ class _CocomsTabState extends State<CocomsTab> {
 
   void _setData() {
     colors = getRandomColors(cocomsContent.length);
-    cocomsContent.forEach((k, v) => cocomNames.add(v));
   }
 
   Future<void> _refreshData() {
@@ -52,8 +60,28 @@ class _CocomsTabState extends State<CocomsTab> {
     );
   }
 
+  void cocomEnd(FinishedCocom fcocom) async {
+    final url = await AuthService().getUrl();
+    var encodeList = [for (final loc in fcocom.locations) loc!.toJson()];
+
+    http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'id': fcocom.id,
+        'name': fcocom.name,
+        'startHour': fcocom.startHour,
+        'endHour': fcocom.endHour,
+        'locations': encodeList,
+        'information': fcocom.information
+      }),
+    );
+  }
+
   Widget _listBuilder(BuildContext context, int index) {
-    if (index >= _itemsLength) return Container();
+    if (index >= cocomList.length) return Container();
 
     // Show a slightly different color palette. Show poppy-ier colors on iOS
     // due to lighter contrasting bars and tone it down on Android.
@@ -67,15 +95,18 @@ class _CocomsTabState extends State<CocomsTab> {
       child: Hero(
         tag: index,
         child: HeroAnimatingCocomCard(
-          cocom: cocomNames[index],
+          cocom: cocomList[index],
           color: color,
           heroAnimation: const AlwaysStoppedAnimation(0),
           onPressed: () => Navigator.of(context).push<void>(
             MaterialPageRoute(
               builder: (context) => RouteTab(
                 id: index,
-                cocom: cocomNames[index],
+                cocom: cocomList[index],
                 color: color,
+                cocomEnd: (_) {
+                  cocomEnd(_);
+                },
               ),
             ),
           ),
@@ -93,17 +124,6 @@ class _CocomsTabState extends State<CocomsTab> {
     WidgetsBinding.instance.reassembleApplication();
   }
 
-  // ===========================================================================
-  // Non-shared code below because:
-  // - Android and iOS have different scaffolds
-  // - There are different items in the app bar / nav bar
-  // - Android has a hamburger drawer, iOS has bottom tabs
-  // - The iOS nav bar is scrollable, Android is not
-  // - Pull-to-refresh works differently, and Android has a button to trigger it too
-  //
-  // And these are all design time choices that doesn't have a single 'right'
-  // answer.
-  // ===========================================================================
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -126,7 +146,7 @@ class _CocomsTabState extends State<CocomsTab> {
         onRefresh: _refreshData,
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          itemCount: _itemsLength,
+          itemCount: cocomList.length,
           itemBuilder: _listBuilder,
         ),
       ),
@@ -153,7 +173,7 @@ class _CocomsTabState extends State<CocomsTab> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 _listBuilder,
-                childCount: _itemsLength,
+                childCount: cocomList.length,
               ),
             ),
           ),

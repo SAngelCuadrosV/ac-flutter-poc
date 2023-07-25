@@ -11,7 +11,7 @@ class Location {
     required this.name,
     required this.postal,
     required this.address,
-    this.phone = '',
-    this.information = '',
+    this.phone = '-',
+    this.information = '-',
   });
 }

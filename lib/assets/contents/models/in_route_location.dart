@@ -5,15 +5,28 @@ class InRouteLocation {
   final String address;
   final String phone;
   final String information;
+  String hour;
   int quantity;
-  
+
   InRouteLocation({
     required this.id,
     required this.name,
     required this.postal,
     required this.address,
     this.quantity = 0,
-    this.phone = '',
-    this.information = '',
+    this.phone = '-',
+    this.information = '-',
+    this.hour = '00:00:00'
   });
+
+  Map<String,dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'quantity': quantity,
+        'postal': postal,
+        'address': address,
+        'phone': phone,
+        'information': information,
+        'hour': hour
+      };
 }

@@ -1,6 +1,8 @@
+import 'package:ac_drivers/assets/contents/finished_cocoms.dart';
+import 'package:ac_drivers/assets/contents/models/finished_cocom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:date_format/date_format.dart';
+import 'package:intl/intl.dart';
 
 import '../../assets/contents/locations.dart';
 import '../../assets/contents/models/in_route_location.dart';
@@ -12,12 +14,18 @@ import '../../widgets/single_location.dart';
 import '../../assets/contents/models/cocom.dart';
 
 class RouteTab extends StatefulWidget {
+  final void Function(FinishedCocom fcocom) cocomEnd;
   final Cocom cocom;
   final int id;
   final Color color;
 
-  const RouteTab(
-      {super.key, required this.cocom, required this.id, required this.color});
+  const RouteTab({
+    super.key,
+    required this.cocom,
+    required this.id,
+    required this.color,
+    required this.cocomEnd,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -25,41 +33,102 @@ class RouteTab extends StatefulWidget {
 }
 
 class _RouteTabState extends State<RouteTab> {
-  bool _routeStarted = false;
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
+  bool _cocomEnd = false;
+  String startDate = '';
+  String endDate = '';
+  String startTime = '00:00:00';
+  String endTime = '00:00:00';
 
   @override
   void initState() {
-    _routeStarted = false;
-    startTime =
-        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
-    endTime =
-        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0, 0, 0);
+    if (widget.cocom.isStarted) {
+      startTime = widget.cocom.startTime;
+    } else {
+      for (final loc in widget.cocom.locations) {
+        loc!.quantity = 0;
+        loc.hour = '00:00:00';
+      }
+    }
     startRoute;
     endRoute;
     super.initState();
   }
 
   void startRoute() {
-    if (!_routeStarted) {
+    if (!widget.cocom.isStarted) {
+      widget.cocom.isStarted = true;
+      widget.cocom.startTime = DateFormat("hh:mm:ss").format(DateTime.now());
+      startDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
       setState(() {
-        _routeStarted = !_routeStarted;
-        startTime = DateTime.now();
+        startTime = DateFormat("hh:mm:ss").format(DateTime.now());
       });
     }
   }
 
   void endRoute() {
-    if (_routeStarted) {
-      setState(() {
-        _routeStarted = !_routeStarted;
-        endTime = DateTime.now();
-      });
+    if (widget.cocom.locations.isNotEmpty) {
+      if (widget.cocom.isStarted) {
+        endDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+        _cocomEnd = true;
+        setState(() {
+          widget.cocom.isStarted = false;
+          endTime = DateFormat("hh:mm:ss").format(DateTime.now());
+        });
+        addCocomEnd();
+      }
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Agrega una locación para poder finalizar la Cocom'),
+        ),
+      );
     }
   }
 
-  Widget buildColumn(String text) {
+  void cancelRoute() {
+    setState(() {
+      widget.cocom.isStarted = false;
+      widget.cocom.startTime = '';
+      startTime = '00:00:00';
+      endTime = '00:00:00';
+    });
+  }
+
+  void addCocomEnd() {
+    final fcocom = FinishedCocom(
+      startHour: '$startDate $startTime',
+      endHour: '$endDate $endTime',
+      id: widget.cocom.id,
+      name: widget.cocom.name,
+      locations: widget.cocom.locations,
+      information: widget.cocom.information,
+    );
+    finishedList.add(fcocom);
+    widget.cocomEnd(fcocom);
+  }
+
+  Widget createButtons() {
+    if (_cocomEnd) {
+      return const Text(
+        'Cocom Finalizada',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      );
+    } else {
+      if (widget.cocom.isStarted) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FinishRouteButton(update: endRoute, cancel: cancelRoute),
+          ],
+        );
+      } else {
+        return StartRouteButton(update: startRoute);
+      }
+    }
+  }
+
+  Widget buildColumn(String text, String time) {
     return Column(
       children: [
         Text(
@@ -70,7 +139,7 @@ class _RouteTabState extends State<RouteTab> {
           ),
         ),
         Text(
-          formatDate(startTime, [HH, ':', nn, ':', ss]),
+          time,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -88,7 +157,6 @@ class _RouteTabState extends State<RouteTab> {
 
   void _onAdd(String name) {
     var result = cocomsLocations.firstWhere((element) => element.name == name);
-    print(result);
     var irl = InRouteLocation(
         id: result.id,
         name: result.name,
@@ -124,7 +192,8 @@ class _RouteTabState extends State<RouteTab> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 15, top: 16, bottom: 8),
+            padding:
+                const EdgeInsets.only(left: 15, top: 16, bottom: 8, right: 15),
             child: Column(
               children: [
                 Text(
@@ -136,18 +205,16 @@ class _RouteTabState extends State<RouteTab> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: _routeStarted
-                      ? FinishRouteButton(update: endRoute)
-                      : StartRouteButton(update: startRoute),
+                  child: createButtons(),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildColumn('Hora de inicio'),
+                    buildColumn('Hora de inicio', startTime),
                     const Padding(
                       padding: EdgeInsets.only(left: 40),
                     ),
-                    buildColumn('Hora al finalizar'),
+                    buildColumn('Hora al finalizar', endTime),
                   ],
                 )
               ],
@@ -158,13 +225,21 @@ class _RouteTabState extends State<RouteTab> {
             color: Colors.grey,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.cocom.locations.length,
-              itemBuilder: (ctx, index) => SingleLocation(
-                location: widget.cocom.locations[index]!,
-                function: _onDismiss,
-              ),
-            ),
+            child: widget.cocom.locations.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No hay ubicaciones\n¡Agrega una!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: widget.cocom.locations.length,
+                    itemBuilder: (ctx, index) => SingleLocation(
+                      location: widget.cocom.locations[index]!,
+                      function: _onDismiss,
+                    ),
+                  ),
           ),
         ],
       ),

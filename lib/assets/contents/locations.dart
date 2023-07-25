@@ -6,7 +6,7 @@ const List <Location> cocomsLocations = [
     name: 'FAMILY PHARMA',
     postal: 'BRUXELLES (1000)',
     address: 'RUE BLAES 141',
-    phone: '',
+    phone: '68458',
     information: 'FERME A 13H',
   ),
   Location(
@@ -26,7 +26,7 @@ const List <Location> cocomsLocations = [
     name: 'CENTRE PCR VILVOORDE',
     postal: 'VILVOORDE (1800)',
     address: 'NIJVERHEIDSSTRAAT 100',
-    phone: '',
+    phone: '94384',
     information: 'Boite aux lettres en face de la porte d\'entrée. Clé universelle',
   ),
 ];

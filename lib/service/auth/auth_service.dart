@@ -20,4 +20,13 @@ class AuthService {
       }
     }
   }
+
+  Future<Uri> getUrl() async {
+    final user =  await FirebaseAuth.instance.currentUser!.email;
+    final mail = user!.split('@');
+      final url = Uri.https(
+        'ac-flutter-poc-default-rtdb.europe-west1.firebasedatabase.app',
+        'Reports/${mail.first}.json');
+      return url;
+  }
 }

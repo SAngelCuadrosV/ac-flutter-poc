@@ -58,3 +58,12 @@ Map<String, Cocom> cocomsContent = {
     ],
   ),
 };
+
+final cocomExpress = Cocom(
+  id: 'expess',
+  name: 'COCOM EXPRESS',
+  information: 'Una Cocom Express es una ruta idealmente a un **punto único**'
+      ' para recoger muestras y ser enviadas con prioridad al centro de análisis.'
+      ' Se puede agregar más de un punto de recogida de ser necesario.',
+  locations: [],
+);
