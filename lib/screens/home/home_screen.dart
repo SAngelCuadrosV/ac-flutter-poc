@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../assets/contents/cocoms.dart';
 import '../reports/reports_tab.dart';
 import '../profile/profile_tab.dart';
-import '../express/express_tab.dart';
 import '../cocoms/cocoms_tab.dart';
 import '../../widgets/widgets.dart';
+import '../../widgets/android_drawer.dart';
 
 class PlatformAdaptingHomePage extends StatefulWidget {
   const PlatformAdaptingHomePage({super.key});
@@ -22,7 +21,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   Widget _buildAndroidHomePage(BuildContext context) {
     return CocomsTab(
       key: cocomsTabKey,
-      androidDrawer: _AndroidDrawer(),
+      androidDrawer: AndroidDrawer(),
     );
   }
 
@@ -78,67 +77,3 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   }
 }
 
-class _AndroidDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(color: Colors.green),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Icon(
-                Icons.account_circle,
-                color: Colors.green.shade800,
-                size: 96,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: CocomsTab.androidIcon,
-            title: const Text(CocomsTab.title),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: ReportsTab.androidIcon,
-            title: const Text(ReportsTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const ReportsTab()));
-            },
-          ),
-          ListTile(
-            leading: ProfileTab.androidIcon,
-            title: const Text(ProfileTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const ProfileTab()));
-            },
-          ),
-          // Long drawer contents are often segmented.
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(),
-          ),
-          ListTile(
-            leading: const Icon(Icons.time_to_leave),
-            title: const Text('Express'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ExpressTab(cocom: cocomExpress)));
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}

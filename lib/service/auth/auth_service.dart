@@ -29,4 +29,9 @@ class AuthService {
         'Reports/${mail.first}.json');
       return url;
   }
+  
+  Future<String?> getPhotoURL() async {
+    final photoURL = await FirebaseAuth.instance.currentUser!.photoURL;
+    return photoURL;
+  }
 }
