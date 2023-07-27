@@ -1,11 +1,15 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
+import '../../service/auth/auth_service.dart';
 import '../../widgets/profile_pick.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
@@ -26,34 +30,75 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  String? name;
-  String? mail;
+  bool _isLoading = true;
+  String? _name;
+  String? _mail;
+  int? _count;
 
   @override
   void initState() {
     _getName();
     _getMail();
+    _getCocomsCount();
     super.initState();
   }
 
   void _getName() {
     setState(() {
-      name = FirebaseAuth.instance.currentUser!.displayName;
+      _name = FirebaseAuth.instance.currentUser!.displayName;
     });
   }
 
   void _getMail() {
     setState(() {
-      mail = FirebaseAuth.instance.currentUser!.email;
+      _mail = FirebaseAuth.instance.currentUser!.email;
     });
+  }
+
+  void _getCocomsCount() async {
+    final url = await AuthService().getUrl();
+    int trycount = 0;
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode >= 400) _count = null;
+
+      if (response.body == 'null') _count = null;
+
+      final Map<String, dynamic> listData = json.decode(response.body);
+      trycount = listData.entries.length;
+
+      setState(() {
+        _count = trycount;
+        _isLoading = false;
+      });
+    } catch (e) {
+      _count = null;
+    }
   }
 
   Text _setText(String txt, bool isMail) {
     return Text(
       txt,
       style: GoogleFonts.raleway(
-        fontWeight: isMail? FontWeight.normal:FontWeight.w500,
-        fontSize: isMail? 16:20,
+        fontWeight: isMail ? FontWeight.normal : FontWeight.w500,
+        fontSize: isMail ? 16 : 20,
+      ),
+    );
+  }
+
+  Text _countText() {
+    String txt = 'Cocoms completadas: ';
+    if (_isLoading) {
+      txt += '...cargando';
+    } else {
+      txt += _count.toString();
+    }
+    return Text(
+      txt,
+      style: GoogleFonts.raleway(
+        fontSize: 18,
       ),
     );
   }
@@ -71,24 +116,24 @@ class _ProfileTabState extends State<ProfileTab> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (name != null)
-                    _setText(name!, false)
+                  if (_name != null)
+                    _setText(_name!, false)
                   else
                     _setText('No hay nombre', false),
                   const SizedBox(height: 12),
-                  if (mail != null)
-                    _setText(mail!, true)
+                  if (_mail != null)
+                    _setText(_mail!, true)
                   else
-                    const Text('No hay correo'),
+                    _setText('No hay correo', true),
                 ],
               ),
             ]),
             const SizedBox(height: 20),
-            const Text('cocomsEnded'),
+            _countText(),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('ir a reportes'),
+              child: const Text('Ver reportes'),
             ),
             const Spacer(),
             const Row(
