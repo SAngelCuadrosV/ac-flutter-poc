@@ -30,7 +30,6 @@ class _ProfilePickState extends State<ProfilePick> {
       setState(() {
         _isLoading = false;
       });
-      print(e.runtimeType);
     }
   }
 
@@ -47,11 +46,9 @@ class _ProfilePickState extends State<ProfilePick> {
                 color: Colors.green.shade800,
                 size: 96,
               )
-            : Center(
-                heightFactor: double.maxFinite,
-                child: Container(
-                  height: 96,
-                  width: 96,
+            : Container(
+                  height: 80,
+                  width: 80,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(100)),
                     image: DecorationImage(
@@ -59,7 +56,6 @@ class _ProfilePickState extends State<ProfilePick> {
                     fit: BoxFit.contain
                     ),
                   ),
-                ),
               );
   }
 

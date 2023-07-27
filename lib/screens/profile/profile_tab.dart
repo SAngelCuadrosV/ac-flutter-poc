@@ -1,65 +1,102 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../widgets/profile_pick.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
 import '../../widgets/widgets.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   static const title = 'Perfil';
   static const androidIcon = Icon(Icons.person);
   static const iosIcon = Icon(CupertinoIcons.profile_circled);
 
-  const ProfileTab({super.key});
+  const ProfileTab({
+    super.key,
+  });
+
+  @override
+  State<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<ProfileTab> {
+  String? name;
+  String? mail;
+
+  @override
+  void initState() {
+    _getName();
+    _getMail();
+    super.initState();
+  }
+
+  void _getName() {
+    setState(() {
+      name = FirebaseAuth.instance.currentUser!.displayName;
+    });
+  }
+
+  void _getMail() {
+    setState(() {
+      mail = FirebaseAuth.instance.currentUser!.email;
+    });
+  }
+
+  Text _setText(String txt, bool isMail) {
+    return Text(
+      txt,
+      style: GoogleFonts.raleway(
+        fontWeight: isMail? FontWeight.normal:FontWeight.w500,
+        fontSize: isMail? 16:20,
+      ),
+    );
+  }
 
   Widget _buildBody(BuildContext context) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  '😼',
-                  style: TextStyle(
-                    fontSize: 80,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
+            Row(children: [
+              const ProfilePick(),
+              const SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (name != null)
+                    _setText(name!, false)
+                  else
+                    _setText('No hay nombre', false),
+                  const SizedBox(height: 12),
+                  if (mail != null)
+                    _setText(mail!, true)
+                  else
+                    const Text('No hay correo'),
+                ],
               ),
+            ]),
+            const SizedBox(height: 20),
+            const Text('cocomsEnded'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('ir a reportes'),
             ),
-            const PreferenceCard(
-              header: 'MY INTENSITY PREFERENCE',
-              content: '🔥',
-              preferenceChoices: [
-                'Super heavy',
-                'Dial it to 11',
-                "Head bangin'",
-                '1000W',
-                'My neighbor hates me',
+            const Spacer(),
+            const Row(
+              children: [
+                Spacer(),
+                LogOutButton(),
               ],
             ),
-            const PreferenceCard(
-              header: 'CURRENT MOOD',
-              content: '🤘🏾🚀',
-              preferenceChoices: [
-                'Over the moon',
-                'Basking in sunlight',
-                'Hello fellow Martians',
-                'Into the darkness',
-              ],
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            const LogOutButton(),
           ],
         ),
       ),
@@ -67,14 +104,10 @@ class ProfileTab extends StatelessWidget {
   }
 
   // ===========================================================================
-  // Non-shared code below because on iOS, the settings tab is nested inside of
-  // the profile tab as a button in the nav bar.
-  // ===========================================================================
-
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(title),
+        title: const Text(ProfileTab.title),
       ),
       body: _buildBody(context),
     );

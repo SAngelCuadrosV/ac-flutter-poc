@@ -20,7 +20,7 @@ class AndroidDrawer extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.green),
             child: Padding(
               padding: EdgeInsets.only(bottom: 20),
-              child: ProfilePick(),
+              child: Center(child: ProfilePick()),
             ),
           ),
           ListTile(
