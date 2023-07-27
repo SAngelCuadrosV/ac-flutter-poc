@@ -13,6 +13,7 @@ class LogOutButton extends StatelessWidget {
 
   Widget _buildAndroid(BuildContext context) {
     return ElevatedButton(
+      style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
       child: const Text('LOG OUT', style: TextStyle(color: Colors.white)),
       onPressed: () {
         // You should do something with the result of the dialog prompt in a

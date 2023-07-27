@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'dart:convert';
 
+import 'package:ac_drivers/screens/reports/reports_tab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +104,11 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
+  void _pushReportTab() {
+    Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const ReportsTab()));
+  }
+
   Widget _buildBody(BuildContext context) {
     return SafeArea(
       child: Padding(
@@ -128,11 +134,11 @@ class _ProfileTabState extends State<ProfileTab> {
                 ],
               ),
             ]),
-            const SizedBox(height: 20),
+            const SizedBox(height: 60),
             _countText(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _pushReportTab,
               child: const Text('Ver reportes'),
             ),
             const Spacer(),
