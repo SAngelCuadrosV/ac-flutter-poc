@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'widgets.dart';
 
 class LogOutButton extends StatelessWidget {
-  static const _logoutMessage = Text("Are you sure you want to logout?");
+  static const _logoutMessage = Text("¿Estas seguro que quieres cerrar sesión?");
 
   const LogOutButton({
     super.key,
@@ -14,7 +14,7 @@ class LogOutButton extends StatelessWidget {
   Widget _buildAndroid(BuildContext context) {
     return ElevatedButton(
       style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
-      child: const Text('LOG OUT', style: TextStyle(color: Colors.white)),
+      child: const Text('CERRAR SESIÓN', style: TextStyle(color: Colors.white)),
       onPressed: () {
         // You should do something with the result of the dialog prompt in a
         // real app but this is just a demo.
@@ -22,11 +22,11 @@ class LogOutButton extends StatelessWidget {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text('Log out?'),
+              title: const Text('¿Cerrar sesión?'),
               content: _logoutMessage,
               actions: [
-                TextButton(
-                  child: const Text('Yes'),
+                ElevatedButton(
+                  child: const Text('Si'),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
                     var count = 0;
@@ -36,7 +36,7 @@ class LogOutButton extends StatelessWidget {
                   },
                 ),
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: const Text('Cancelar'),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -50,7 +50,7 @@ class LogOutButton extends StatelessWidget {
   Widget _buildIos(BuildContext context) {
     return CupertinoButton(
       color: CupertinoColors.destructiveRed,
-      child: const Text('Log out'),
+      child: const Text('Cerrar sesión'),
       onPressed: () {
         // You should do something with the result of the action sheet prompt
         // in a real app but this is just a demo.
@@ -58,7 +58,7 @@ class LogOutButton extends StatelessWidget {
           context: context,
           builder: (context) {
             return CupertinoActionSheet(
-              title: const Text('Log out?'),
+              title: const Text('¿Cerrar sesión?'),
               message: _logoutMessage,
               actions: [
                 CupertinoActionSheetAction(
@@ -67,13 +67,13 @@ class LogOutButton extends StatelessWidget {
                     FirebaseAuth.instance.signOut();
                     Navigator.pop(context);
                   },
-                  child: const Text('Yes'),
+                  child: const Text('Si'),
                 ),
               ],
               cancelButton: CupertinoActionSheetAction(
                 isDefaultAction: true,
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: const Text('Cancelar'),
               ),
             );
           },
