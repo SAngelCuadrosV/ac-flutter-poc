@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../../service/auth/auth_service.dart';
-import '../../widgets/profile_pick.dart';
+import '../../widgets/circular_profile_pick.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
@@ -34,7 +34,8 @@ class _ProfileTabState extends State<ProfileTab> {
   bool _isLoading = true;
   String? _name;
   String? _mail;
-  int? _count;
+  int? _cocmosCount;
+  String? _error;
 
   @override
   void initState() {
@@ -63,19 +64,19 @@ class _ProfileTabState extends State<ProfileTab> {
     try {
       final response = await http.get(url);
 
-      if (response.statusCode >= 400) _count = null;
+      if (response.statusCode >= 400) _error = 'e';
 
-      if (response.body == 'null') _count = null;
+      if (response.body == 'null') _error = 'e';
 
       final Map<String, dynamic> listData = json.decode(response.body);
       trycount = listData.entries.length;
 
       setState(() {
-        _count = trycount;
+        _cocmosCount = trycount;
         _isLoading = false;
       });
     } catch (e) {
-      _count = null;
+      _error = 'e';
     }
   }
 
@@ -90,11 +91,15 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Text _countText() {
-    String txt = 'Cocoms completadas: ';
-    if (_isLoading) {
-      txt += '...cargando';
-    } else {
-      txt += _count.toString();
+    String txt = 'Cocoms completadas:  ';
+    if (_error != null){
+      if (_isLoading) {
+        txt += 'Cargando...';
+      } else {
+        txt += _cocmosCount.toString();
+      }
+    }else {
+      txt = 'Visita la ventana de Reportes para ver las Cocoms que has completado.';
     }
     return Text(
       txt,
@@ -105,8 +110,8 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   void _pushReportTab() {
-    Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const ReportsTab()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const ReportsTab()));
   }
 
   Widget _buildBody(BuildContext context) {
@@ -117,7 +122,7 @@ class _ProfileTabState extends State<ProfileTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              const ProfilePick(),
+              const CircularProfilePick(),
               const SizedBox(width: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

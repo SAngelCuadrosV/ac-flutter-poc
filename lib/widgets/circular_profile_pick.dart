@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../service/auth/auth_service.dart';
 
-class ProfilePick extends StatefulWidget {
-  const ProfilePick({super.key});
+class CircularProfilePick extends StatefulWidget {
+  const CircularProfilePick({super.key});
 
   @override
-  State<ProfilePick> createState() => _ProfilePickState();
+  State<CircularProfilePick> createState() => _CircularProfilePickState();
 }
 
-class _ProfilePickState extends State<ProfilePick> {
+class _CircularProfilePickState extends State<CircularProfilePick> {
   bool _isLoading = true;
   String? photoURL;
 
