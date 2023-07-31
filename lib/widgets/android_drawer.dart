@@ -5,7 +5,7 @@ import '../screens/cocoms/cocoms_tab.dart';
 import '../screens/express/express_tab.dart';
 import '../screens/profile/profile_tab.dart';
 import '../screens/reports/reports_tab.dart';
-import 'circular_profile_pick.dart';
+import 'circular_profile_photo.dart';
 
 class AndroidDrawer extends StatelessWidget {
   const AndroidDrawer({super.key});
@@ -20,7 +20,7 @@ class AndroidDrawer extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.green),
             child: Padding(
               padding: EdgeInsets.only(bottom: 20),
-              child: Center(child: CircularProfilePick()),
+              child: Center(child: CircularProfilePhoto()),
             ),
           ),
           ListTile(

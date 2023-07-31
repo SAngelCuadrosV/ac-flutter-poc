@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../../service/auth/auth_service.dart';
-import '../../widgets/circular_profile_pick.dart';
+import '../../widgets/circular_profile_photo.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
@@ -122,7 +122,7 @@ class _ProfileTabState extends State<ProfileTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              const CircularProfilePick(),
+              const CircularProfilePhoto(),
               const SizedBox(width: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
