@@ -1,65 +1,158 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:convert';
 
+import 'package:ac_drivers/screens/reports/reports_tab.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
+import '../../service/auth/auth_service.dart';
+import '../../widgets/circular_profile_photo.dart';
 import '../../assets/contents/cocoms.dart';
 import '../../widgets/logout_button.dart';
 import '../express/express_tab.dart';
 import '../../widgets/widgets.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   static const title = 'Perfil';
   static const androidIcon = Icon(Icons.person);
   static const iosIcon = Icon(CupertinoIcons.profile_circled);
 
-  const ProfileTab({super.key});
+  const ProfileTab({
+    super.key,
+  });
+
+  @override
+  State<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<ProfileTab> {
+  bool _isLoading = true;
+  String? _name;
+  String? _mail;
+  int? _cocmosCount;
+  String? _error;
+
+  @override
+  void initState() {
+    _getName();
+    _getMail();
+    _getCocomsCount();
+    super.initState();
+  }
+
+  void _getName() {
+    setState(() {
+      _name = FirebaseAuth.instance.currentUser!.displayName;
+    });
+  }
+
+  void _getMail() {
+    setState(() {
+      _mail = FirebaseAuth.instance.currentUser!.email;
+    });
+  }
+
+  void _getCocomsCount() async {
+    final url = await AuthService().getUrl();
+    int trycount = 0;
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode >= 400) _error = 'e';
+
+      if (response.body == 'null') _error = 'e';
+
+      final Map<String, dynamic> listData = json.decode(response.body);
+      trycount = listData.entries.length;
+
+      setState(() {
+        _cocmosCount = trycount;
+        _isLoading = false;
+      });
+    } catch (e) {
+      _error = 'e';
+    }
+  }
+
+  Text _setText(String txt, bool isMail) {
+    return Text(
+      txt,
+      style: GoogleFonts.raleway(
+        fontWeight: isMail ? FontWeight.normal : FontWeight.w500,
+        fontSize: isMail ? 16 : 20,
+      ),
+    );
+  }
+
+  Text _countText() {
+    String txt = 'Cocoms completadas:  ';
+    if (_error != null){
+      if (_isLoading) {
+        txt += 'Cargando...';
+      } else {
+        txt += _cocmosCount.toString();
+      }
+    }else {
+      txt = 'Visita la ventana de Reportes para ver las Cocoms que has completado.';
+    }
+    return Text(
+      txt,
+      style: GoogleFonts.raleway(
+        fontSize: 18,
+      ),
+    );
+  }
+
+  void _pushReportTab() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const ReportsTab()));
+  }
 
   Widget _buildBody(BuildContext context) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  '😼',
-                  style: TextStyle(
-                    fontSize: 80,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
+            Row(children: [
+              const CircularProfilePhoto(),
+              const SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_name != null)
+                    _setText(_name!, false)
+                  else
+                    _setText('No hay nombre', false),
+                  const SizedBox(height: 12),
+                  if (_mail != null)
+                    _setText(_mail!, true)
+                  else
+                    _setText('No hay correo', true),
+                ],
               ),
+            ]),
+            const SizedBox(height: 60),
+            _countText(),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _pushReportTab,
+              child: const Text('Ver reportes'),
             ),
-            const PreferenceCard(
-              header: 'MY INTENSITY PREFERENCE',
-              content: '🔥',
-              preferenceChoices: [
-                'Super heavy',
-                'Dial it to 11',
-                "Head bangin'",
-                '1000W',
-                'My neighbor hates me',
+            const Spacer(),
+            const Row(
+              children: [
+                Spacer(),
+                LogOutButton(),
               ],
             ),
-            const PreferenceCard(
-              header: 'CURRENT MOOD',
-              content: '🤘🏾🚀',
-              preferenceChoices: [
-                'Over the moon',
-                'Basking in sunlight',
-                'Hello fellow Martians',
-                'Into the darkness',
-              ],
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            const LogOutButton(),
           ],
         ),
       ),
@@ -67,14 +160,10 @@ class ProfileTab extends StatelessWidget {
   }
 
   // ===========================================================================
-  // Non-shared code below because on iOS, the settings tab is nested inside of
-  // the profile tab as a button in the nav bar.
-  // ===========================================================================
-
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(title),
+        title: const Text(ProfileTab.title),
       ),
       body: _buildBody(context),
     );
