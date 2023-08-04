@@ -29,7 +29,12 @@ class _SingleLocationState extends State<SingleLocation> {
   final controllerHour = TextEditingController();
 
   Image get getImage {
-    return Image.asset('lib/assets/images/noooo.gif');
+    return Image.network(
+      widget.location.imageURL,
+      fit: BoxFit.cover,
+      width: 100,
+      height: 80,
+    );
   }
 
   Text _setInfo(String txt, bool confirm) {
@@ -272,7 +277,7 @@ class _SingleLocationState extends State<SingleLocation> {
             children: [
               _setInfo(widget.location.name, true),
               _setInfo(widget.location.postal, false),
-              _setInfo(widget.location.address,true),
+              _setInfo(widget.location.address, true),
               _setInfo(widget.location.phone, false),
               Row(
                 children: [
