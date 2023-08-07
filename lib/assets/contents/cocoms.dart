@@ -11,6 +11,7 @@ InRouteLocation generateItem(Location location) {
     address: location.address,
     information: location.information,
     phone: location.phone,
+    imageURL: location.imageURL,
   );
 }
 

@@ -170,6 +170,7 @@ class HeroAnimatingCocomCard extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
+                Image.network(cocom.imageURL, width: double.maxFinite,fit: BoxFit.cover,),
                 // The cocom title banner slides off in the hero animation.
                 Positioned(
                   bottom: -80 * heroAnimation.value,
@@ -177,7 +178,7 @@ class HeroAnimatingCocomCard extends StatelessWidget {
                   right: 0,
                   child: Container(
                     height: 80,
-                    color: Colors.black12,
+                    color: Colors.black45,
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(

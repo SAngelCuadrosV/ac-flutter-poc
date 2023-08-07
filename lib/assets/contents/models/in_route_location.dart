@@ -5,6 +5,7 @@ class InRouteLocation {
   final String address;
   final String phone;
   final String information;
+  final String imageURL;
   String hour;
   int quantity;
 
@@ -13,6 +14,7 @@ class InRouteLocation {
     required this.name,
     required this.postal,
     required this.address,
+    this.imageURL = '',
     this.quantity = 0,
     this.phone = '-',
     this.information = '-',
